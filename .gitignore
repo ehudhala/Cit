@@ -1,0 +1,7 @@
+*.o
+main
+driver
+*.vim
+*.swp
+*.swo
+*.d
