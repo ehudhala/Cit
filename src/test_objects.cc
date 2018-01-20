@@ -14,12 +14,12 @@ std::string read_stream(std::istream& in) {
 
 TEST(blob, returns_content) {
     inmemory_blob_t blob("asdf");
-    ASSERT_EQ("asdf", read_stream(*blob.get_content()));
+    ASSERT_EQ(blob.content, read_stream(*blob.get_content()));
 }
 
 TEST(commit, returns_content) {
     commit_t commit("asdf");
-    ASSERT_EQ("asdf", read_stream(*commit.get_content()));
+    ASSERT_EQ(commit.description, read_stream(*commit.get_content()));
 }
 
 TEST(inmemory_object_store, save) {

@@ -62,7 +62,10 @@ public:
     void set_head(const ref_t&);
 };
 
-template <template <class, class>class index_t, class object_store_t, class ref_store_t, class blob_t>
+template <
+    template <class, class>class index_t,
+    class object_store_t, class ref_store_t,
+    class blob_t, class id_func>
 class store_t {
 public:
     index_t<object_store_t, blob_t> index;
