@@ -4,12 +4,13 @@
 
 #include <map>
 #include <string>
+#include <functional>
 
 #include "boost/variant.hpp"
 
 namespace cit {
 
-using id_t = std::size_t;
+using hash_t = std::size_t;
 using ref_t = std::string;
 
 class object_t {
@@ -35,19 +36,23 @@ public:
 
 class inmemory_object_store_t {
 public:
-    id_t save(const object_t&);
-    commit_t load_commit(id_t) const;
+    inmemory_object_store_t(std::function<hash_t(object_t&)> hash_func)
+        : hash_func(hash_func) {}
+
+    hash_t save(object_t&);
+    commit_t load_commit(hash_t) const;
 private:
-    std::map<id_t, object_t&> objects_map;
+    std::map<hash_t, object_t&> objects_map;
+    std::function<hash_t(object_t&)> hash_func;
 };
 
-using blob_names_t = std::map<std::string, id_t>;
+using blob_names_t = std::map<std::string, hash_t>;
 
 template <class object_store_t, class blob_t>
 class inmemory_index_t {
 public:
     inmemory_index_t(object_store_t&);
-    id_t add(const std::string& name, blob_t);
+    hash_t add(const std::string& name, blob_t);
 private:
     blob_names_t blob_names;
     object_store_t& object_store;
@@ -55,17 +60,18 @@ private:
 
 class inmemory_ref_store_t {
 public:
-    id_t get_id(const ref_t&);
-    id_t set_ref(const ref_t&, id_t);
+    hash_t get_hash(const ref_t&);
+    hash_t set_ref(const ref_t&, hash_t);
 
     ref_t get_head();
     void set_head(const ref_t&);
 };
 
+// todo: template index_t
 template <
-    template <class, class>class index_t,
-    class object_store_t, class ref_store_t,
-    class blob_t, class id_func>
+    template <class, class>class index_t, 
+    class object_store_t, 
+    class ref_store_t, class blob_t>
 class store_t {
 public:
     index_t<object_store_t, blob_t> index;
