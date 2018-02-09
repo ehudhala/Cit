@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <functional>
+#include <type_traits>
 
 #include "boost/variant.hpp"
 
@@ -50,6 +51,7 @@ using blob_names_t = std::map<std::string, hash_t>;
 
 template <class object_store_t, class blob_t>
 class inmemory_index_t {
+    using objecty_store = object_store_t;
 public:
     inmemory_index_t(object_store_t&);
     hash_t add(const std::string& name, blob_t);
@@ -67,14 +69,12 @@ public:
     void set_head(const ref_t&);
 };
 
-// todo: template index_t
-template <
-    template <class, class>class index_t, 
-    class object_store_t, 
-    class ref_store_t, class blob_t>
+template <class index_t, class object_store_t, class ref_store_t>
 class store_t {
 public:
-    index_t<object_store_t, blob_t> index;
+    static_assert(std::is_same<typename index_t::object_store, object_store_t>::value, 
+            "The index should use the same object_store as the store.");
+    index_t index;
     object_store_t objects;
     ref_store_t refs;
 };
