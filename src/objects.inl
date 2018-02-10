@@ -14,14 +14,12 @@ std::shared_ptr<std::istream> commit_t::get_content() const {
     return std::make_shared<std::istringstream>(description);
 }
 
-template <class commit_t>
-hash_t inmemory_object_store_t<commit_t>::save(std::unique_ptr<object_t> object) {
-    hash_t hash = hash_func(*object);
+hash_t inmemory_object_store_t::save(std::unique_ptr<object_t> object) {
+    hash_t hash = hash_func(*object->get_content());
     return hash;
 }
 
-template <class commit_t>
-commit_t inmemory_object_store_t<commit_t>::load_commit(hash_t) const {
+commit_t inmemory_object_store_t::load_commit(hash_t) const {
     return commit_t{"asdf"};
 }
 

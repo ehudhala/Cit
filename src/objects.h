@@ -3,11 +3,10 @@
 #define _OBJECTSH
 
 #include <map>
+#include <memory>
 #include <string>
 #include <functional>
 #include <type_traits>
-
-#include "boost/variant.hpp"
 
 namespace cit {
 
@@ -55,17 +54,16 @@ public:
     std::string description;
 };
 
-template <class commit_t>
 class inmemory_object_store_t {
 public:
-    inmemory_object_store_t(std::function<hash_t(object_t&)> hash_func)
+    inmemory_object_store_t(std::function<hash_t(std::istream&)> hash_func)
         : hash_func(hash_func) {}
 
     hash_t save(std::unique_ptr<object_t>);
     commit_t load_commit(hash_t) const;
 private:
     std::map<hash_t, std::unique_ptr<object_t>> objects_map;
-    std::function<hash_t(object_t&)> hash_func;
+    std::function<hash_t(std::istream&)> hash_func;
 };
 
 using blob_names_t = std::map<std::string, hash_t>;
