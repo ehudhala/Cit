@@ -8,8 +8,14 @@
 #include <functional>
 #include <type_traits>
 #include <optional>
+#include <experimental/optional>
 
 #include "boost/variant.hpp"
+
+// Hack for YCM. sadly it doesn't support c++14
+template <class T>
+using optional = std::experimental::optional<T>;
+using std::experimental::nullopt;
 
 namespace cit {
 
@@ -43,21 +49,28 @@ struct commit_t {
 
 using object_t = boost::variant<blob_t, commit_t>;
 
-std::string serialize(const object_t&);
-std::optional<blob_t> deserialize_blob(const std::string& serialized);
-std::optional<commit_t> deserialize_commit(const std::string& serialized);
+struct serializer_t {
+    std::string serialize(const object_t&);
+    optional<blob_t> deserialize_blob(const std::string& serialized);
+    optional<commit_t> deserialize_commit(const std::string& serialized);
+};
 
+template <class serializer_t>
 class inmemory_object_store_t {
 public:
     // TODO: DI on serializtion.
-    inmemory_object_store_t(std::function<hash_t(const std::string&)> hash_func)
-        : hash_func(hash_func) {}
+    inmemory_object_store_t(
+            std::function<hash_t(const std::string&)> hash_func,
+            serializer_t serializer)
+        : hash_func(hash_func), serializer(serializer) {}
 
     hash_t save(const object_t&);
-    std::optional<commit_t> load_commit(hash_t) const;
+    optional<commit_t> load_commit(hash_t) const;
 private:
-    std::map<hash_t, std::string> objects_map;
     std::function<hash_t(const std::string&)> hash_func;
+    serializer_t serializer;
+
+    std::map<hash_t, std::string> objects_map;
 };
 
 using blob_names_t = std::map<std::string, hash_t>;
