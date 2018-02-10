@@ -6,19 +6,13 @@
 
 using namespace cit;
 
-std::string read_stream(std::istream& in) {
-    std::string s;
-    in >> s;
-    return s;
-}
-
 struct incrementing_hash_func {
     /**
      * This obviously isn't a real hash function,
      * but it is enough for our tests.
      */
     hash_t hash = 0;
-    hash_t operator()(std::istream&) {
+    hash_t operator()(const std::string&) {
         return hash++;
     }
 };
@@ -28,28 +22,27 @@ inmemory_object_store_t inc_object_store() {
 }
 
 TEST(blob, returns_content) {
-    blob_t blob(std::make_shared<std::stringstream>("asdf"));
-    EXPECT_EQ("asdf", read_stream(*blob.get_content()));
+    blob_t blob("asdf");
+    EXPECT_EQ("asdf", blob.serialize());
 }
 
 TEST(commit, returns_content) {
-    auto commit{std::make_unique<commit_t>("asdf")};
-    EXPECT_EQ(commit->description, read_stream(*commit->get_content()));
+    commit_t commit("asdf");
+    EXPECT_EQ("asdf", commit.serialize());
 }
 
 TEST(inmemory_object_store, save_returns_hash) {
     auto objects(inc_object_store());
-    EXPECT_EQ(0, objects.save(std::make_unique<commit_t>("asdf")));
-    EXPECT_EQ(1, objects.save(std::make_unique<commit_t>("asdf")));
+    EXPECT_EQ(0, objects.save(commit_t{"asdf"}));
+    EXPECT_EQ(1, objects.save(commit_t{"asdf"}));
 }
 
 TEST(inmemory_object_store, load_returns_saved) {
-    auto commit{std::make_unique<commit_t>("asdf")};
     auto objects(inc_object_store());
-    cit::hash_t hash = objects.save(std::move(commit));
+    cit::hash_t hash = objects.save(commit_t{"asdf"});
     auto loaded_commit(objects.load_commit(hash));
     ASSERT_TRUE(loaded_commit.has_value());
-    EXPECT_EQ("asdf", read_stream(*(*loaded_commit).get_content()));
+    EXPECT_EQ("asdf", (*loaded_commit).serialize());
 }
 
 TEST(inmemory_object_store, load_unexisting_hash) {

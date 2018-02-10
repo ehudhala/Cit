@@ -7,17 +7,17 @@
 
 namespace cit {
 
-std::shared_ptr<std::istream> blob_t::get_content() const {
+std::string blob_t::serialize() const {
     return content;
 }
 
-std::shared_ptr<std::istream> commit_t::get_content() const {
-    return std::make_shared<std::istringstream>(description);
+std::string commit_t::serialize() const {
+    return description;
 }
 
-hash_t inmemory_object_store_t::save(std::unique_ptr<object_t> object) {
-    hash_t hash = hash_func(*object->get_content());
-    objects_map[hash] = std::move(object);
+hash_t inmemory_object_store_t::save(const object_t& object) {
+    hash_t hash = hash_func(object.serialize());
+    objects_map[hash] = object.serialize();
     return hash;
 }
 

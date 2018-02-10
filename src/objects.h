@@ -33,38 +33,41 @@ public:
      *         * Can't return a weak_ptr if we don't hold a stringstream.
      *     * The store owns the content is probably not relevant since we copy.
      */
-    virtual std::shared_ptr<std::istream> get_content() const = 0;
+    virtual std::string serialize() const = 0;
 
     virtual ~object_t() {}
 };
 
 class blob_t : public object_t {
 public:
-    blob_t(std::shared_ptr<std::istream> content) : content(std::move(content)) {}
-    std::shared_ptr<std::istream> get_content() const;
+    blob_t(std::string content) : content(content) {}
 
-private:
-    std::shared_ptr<std::istream> content;
+    std::string serialize() const;
+    // static std::optional<blob_t> deserialize(const std::string& serialized) const;
+
+    std::string content;
 };
 
 class commit_t : public object_t {
 public:
     commit_t(std::string description) : description(description) {}
-    std::shared_ptr<std::istream> get_content() const;
+
+    std::string serialize() const;
+    // static std::optional<commit_t> deserialize(const std::string& serialized) const;
 
     std::string description;
 };
 
 class inmemory_object_store_t {
 public:
-    inmemory_object_store_t(std::function<hash_t(std::istream&)> hash_func)
+    inmemory_object_store_t(std::function<hash_t(const std::string&)> hash_func)
         : hash_func(hash_func) {}
 
-    hash_t save(std::unique_ptr<object_t>);
+    hash_t save(const object_t&);
     std::optional<commit_t> load_commit(hash_t) const;
 private:
-    std::map<hash_t, std::unique_ptr<object_t>> objects_map;
-    std::function<hash_t(std::istream&)> hash_func;
+    std::map<hash_t, std::string> objects_map;
+    std::function<hash_t(const std::string&)> hash_func;
 };
 
 using blob_names_t = std::map<std::string, hash_t>;
