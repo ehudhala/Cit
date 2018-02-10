@@ -39,7 +39,6 @@ struct blob_t {
 
 struct commit_t {
     std::string description;
-    std::string author;
 };
 
 using object_t = boost::variant<blob_t, commit_t>;
@@ -64,7 +63,6 @@ public:
     boost::optional<commit_t> load_commit(hash_t) const;
     boost::optional<blob_t> load_blob(hash_t) const;
 private:
-
     std::function<hash_t(const std::string&)> hash_func;
     serializer_t serializer;
 

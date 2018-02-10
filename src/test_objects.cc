@@ -81,3 +81,27 @@ TEST(inmemory_object_store, load_commit_returns_saved) {
     ASSERT_TRUE(bool(loaded_commit));
     EXPECT_TRUE(commit == *loaded_commit);
 }
+
+TEST(inmemory_object_store, load_blob_returns_saved) {
+    auto objects(inc_object_store());
+    blob_t blob{"a7"};
+    cit::hash_t hash = objects.save(blob);
+    auto loaded(objects.load_commit(hash));
+    ASSERT_TRUE(bool(loaded));
+    EXPECT_TRUE(blob == *loaded);
+}
+
+struct failing_deserializtion {
+    std::string serialize(const object_t&) const {return "";}
+    boost::optional<commit_t> deserialize_commit(const std::string&) const {
+        return boost::none;
+    }
+};
+
+TEST(inmemory_object_store, load_deserializtion_fails) {
+    inmemory_object_store_t<failing_deserializtion> objects(incrementing_hash_func{}, failing_deserializtion{});
+    commit_t commit{"a8"};
+    cit::hash_t hash = objects.save(commit);
+    EXPECT_TRUE(bool(objects.load_object(hash)));
+    EXPECT_FALSE(bool(objects.load_commit(hash)));
+}
