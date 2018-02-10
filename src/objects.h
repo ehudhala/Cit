@@ -27,23 +27,24 @@ public:
     std::string content;
 };
 
-class commit_t : public object_t {
+class inmemory_commit_t : public object_t {
 public:
-    commit_t(std::string description) : description(description) {}
+    inmemory_commit_t(std::string description) : description(description) {}
     std::unique_ptr<std::istream> get_content() const;
 
     std::string description;
 };
 
+template <class commit_t>
 class inmemory_object_store_t {
 public:
     inmemory_object_store_t(std::function<hash_t(object_t&)> hash_func)
         : hash_func(hash_func) {}
 
-    hash_t save(object_t&);
+    hash_t save(std::unique_ptr<object_t>);
     commit_t load_commit(hash_t) const;
 private:
-    std::map<hash_t, object_t&> objects_map;
+    std::map<hash_t, std::unique_ptr<object_t>> objects_map;
     std::function<hash_t(object_t&)> hash_func;
 };
 
