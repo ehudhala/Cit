@@ -7,17 +7,23 @@
 
 namespace cit {
 
-std::string blob_t::serialize() const {
-    return content;
-}
+struct serializer {
+    std::string operator()(const blob_t& blob) const {
+        return blob.content;
+    }
+    std::string operator()(const commit_t& commit) const {
+        return commit.description;
+    }
+};
 
-std::string commit_t::serialize() const {
-    return description;
+std::string serialize(const object_t& object) {
+    return boost::apply_visitor(serializer{}, object);
 }
 
 hash_t inmemory_object_store_t::save(const object_t& object) {
-    hash_t hash = hash_func(object.serialize());
-    objects_map[hash] = object.serialize();
+    std::string serialized = serialize(object);
+    hash_t hash = hash_func(serialized);
+    objects_map[hash] = serialized;
     return hash;
 }
 

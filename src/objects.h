@@ -9,57 +9,47 @@
 #include <type_traits>
 #include <optional>
 
+#include "boost/variant.hpp"
+
 namespace cit {
 
 using hash_t = std::size_t;
 using ref_t = std::string;
 
-class object_t {
-public:
-    /*
-     * TODO: decide on the ownership model of the content stream.
-     * * For blobs:
-     *     * The store owns the content:
-     *         * Hold and return a ref
-     *         * Hold and return a weak_ptr
-     *     * The blob owns the content:
-     *         * Hold a unique_ptr, return a ref
-     *         * Hold a shared_ptr and return a weak_ref
-     *           (we hold shared because there's no borrowed_ptr for unique_ptr).
-     * * For structured objects (commit, tree, not having blob content):
-     *     * The object owns the content:
-     *         * Hold a copy, return a unique_ptr to a generated stringstream
-     *         * Hold a copy and a stringstream, same as blob owns the content.
-     *         * Can't return a weak_ptr if we don't hold a stringstream.
-     *     * The store owns the content is probably not relevant since we copy.
-     */
-    virtual std::string serialize() const = 0;
-
-    virtual ~object_t() {}
-};
-
-class blob_t : public object_t {
-public:
-    blob_t(std::string content) : content(content) {}
-
-    std::string serialize() const;
-    // static std::optional<blob_t> deserialize(const std::string& serialized) const;
-
+/*
+ * TODO: decide on the ownership model of the content stream.
+ * * For blobs:
+ *     * The store owns the content:
+ *         * Hold and return a ref
+ *         * Hold and return a weak_ptr
+ *     * The blob owns the content:
+ *         * Hold a unique_ptr, return a ref
+ *         * Hold a shared_ptr and return a weak_ref
+ *           (we hold shared because there's no borrowed_ptr for unique_ptr).
+ * * For structured objects (commit, tree, not having blob content):
+ *     * The object owns the content:
+ *         * Hold a copy, return a unique_ptr to a generated stringstream
+ *         * Hold a copy and a stringstream, same as blob owns the content.
+ *         * Can't return a weak_ptr if we don't hold a stringstream.
+ *     * The store owns the content is probably not relevant since we copy.
+ */
+struct blob_t {
     std::string content;
 };
 
-class commit_t : public object_t {
-public:
-    commit_t(std::string description) : description(description) {}
-
-    std::string serialize() const;
-    // static std::optional<commit_t> deserialize(const std::string& serialized) const;
-
+struct commit_t {
     std::string description;
 };
 
+using object_t = boost::variant<blob_t, commit_t>;
+
+std::string serialize(const object_t&);
+std::optional<blob_t> deserialize_blob(const std::string& serialized);
+std::optional<commit_t> deserialize_commit(const std::string& serialized);
+
 class inmemory_object_store_t {
 public:
+    // TODO: DI on serializtion.
     inmemory_object_store_t(std::function<hash_t(const std::string&)> hash_func)
         : hash_func(hash_func) {}
 
