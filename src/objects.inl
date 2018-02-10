@@ -6,12 +6,12 @@
 
 namespace cit {
 
-std::unique_ptr<std::istream> inmemory_blob_t::get_content() const {
-    return std::make_unique<std::istringstream>(content);
+std::shared_ptr<std::istream> blob_t::get_content() const {
+    return content;
 }
 
-std::unique_ptr<std::istream> inmemory_commit_t::get_content() const {
-    return std::make_unique<std::istringstream>(description);
+std::shared_ptr<std::istream> commit_t::get_content() const {
+    return std::make_shared<std::istringstream>(description);
 }
 
 template <class commit_t>

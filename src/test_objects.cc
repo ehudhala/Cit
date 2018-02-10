@@ -23,29 +23,29 @@ struct incrementing_hash_func {
     }
 };
 
-inmemory_object_store_t<inmemory_commit_t> inc_object_store() {
-    return inmemory_object_store_t<inmemory_commit_t>(incrementing_hash_func{});
+inmemory_object_store_t<commit_t> inc_object_store() {
+    return inmemory_object_store_t<commit_t>(incrementing_hash_func{});
 }
 
 TEST(blob, returns_content) {
-    inmemory_blob_t blob("asdf");
-    EXPECT_EQ(blob.content, read_stream(*blob.get_content()));
+    blob_t blob(std::make_shared<std::stringstream>("asdf"));
+    EXPECT_EQ("asdf", read_stream(*blob.get_content()));
 }
 
 TEST(commit, returns_content) {
-    auto commit{std::make_unique<inmemory_commit_t>("asdf")};
+    auto commit{std::make_unique<commit_t>("asdf")};
     EXPECT_EQ(commit->description, read_stream(*commit->get_content()));
 }
 
 TEST(inmemory_object_store, save_returns_hash) {
-    auto commit{std::make_unique<inmemory_commit_t>("asdf")};
+    auto commit{std::make_unique<commit_t>("asdf")};
     auto objects(inc_object_store());
     EXPECT_EQ(0, objects.save(std::move(commit)));
     EXPECT_EQ(1, objects.save(std::move(commit)));
 }
 
 TEST(inmemory_object_store, load_returns_saved) {
-    auto commit{std::make_unique<inmemory_commit_t>("asdf")};
+    auto commit{std::make_unique<commit_t>("asdf")};
     auto objects(inc_object_store());
     cit::hash_t id = objects.save(std::move(commit));
     auto loaded_commit(objects.load_commit(id));

@@ -16,21 +16,41 @@ using ref_t = std::string;
 
 class object_t {
 public:
-    virtual std::unique_ptr<std::istream> get_content() const = 0;
+    /*
+     * TODO: decide on the ownership model of the content stream.
+     * * For blobs:
+     *     * The store owns the content:
+     *         * Hold and return a ref
+     *         * Hold and return a weak_ptr
+     *     * The blob owns the content:
+     *         * Hold a unique_ptr, return a ref
+     *         * Hold a shared_ptr and return a weak_ref
+     *           (we hold shared because there's no borrowed_ptr for unique_ptr).
+     * * For structured objects (commit, tree, not having blob content):
+     *     * The object owns the content:
+     *         * Hold a copy, return a unique_ptr to a generated stringstream
+     *         * Hold a copy and a stringstream, same as blob owns the content.
+     *         * Can't return a weak_ptr if we don't hold a stringstream.
+     *     * The store owns the content is probably not relevant since we copy.
+     */
+    virtual std::shared_ptr<std::istream> get_content() const = 0;
+
+    virtual ~object_t() {}
 };
 
-class inmemory_blob_t : public object_t {
+class blob_t : public object_t {
 public:
-    inmemory_blob_t(std::string content) : content(content) {}
-    std::unique_ptr<std::istream> get_content() const;
+    blob_t(std::shared_ptr<std::istream> content) : content(std::move(content)) {}
+    std::shared_ptr<std::istream> get_content() const;
 
-    std::string content;
+private:
+    std::shared_ptr<std::istream> content;
 };
 
-class inmemory_commit_t : public object_t {
+class commit_t : public object_t {
 public:
-    inmemory_commit_t(std::string description) : description(description) {}
-    std::unique_ptr<std::istream> get_content() const;
+    commit_t(std::string description) : description(description) {}
+    std::shared_ptr<std::istream> get_content() const;
 
     std::string description;
 };
