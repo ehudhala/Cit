@@ -48,5 +48,12 @@ TEST(inmemory_object_store, load_returns_saved) {
     auto objects(inc_object_store());
     cit::hash_t hash = objects.save(std::move(commit));
     auto loaded_commit(objects.load_commit(hash));
-    EXPECT_EQ("asdf", read_stream(*loaded_commit.get_content()));
+    ASSERT_TRUE(loaded_commit.has_value());
+    EXPECT_EQ("asdf", read_stream(*(*loaded_commit).get_content()));
+}
+
+TEST(inmemory_object_store, load_unexisting_hash) {
+    auto objects(inc_object_store());
+    auto commit(objects.load_commit(0));
+    EXPECT_FALSE(commit.has_value());
 }

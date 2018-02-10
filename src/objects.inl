@@ -1,6 +1,7 @@
 #include <istream>
 #include <sstream>
 #include <memory>
+#include <optional>
 
 #include "objects.h"
 
@@ -16,11 +17,17 @@ std::shared_ptr<std::istream> commit_t::get_content() const {
 
 hash_t inmemory_object_store_t::save(std::unique_ptr<object_t> object) {
     hash_t hash = hash_func(*object->get_content());
+    objects_map[hash] = std::move(object);
     return hash;
 }
 
-commit_t inmemory_object_store_t::load_commit(hash_t) const {
-    return commit_t{"asdf"};
+std::optional<commit_t> inmemory_object_store_t::load_commit(hash_t hash) const {
+    auto obj_it = objects_map.find(hash);
+    if (obj_it != objects_map.end()) {
+        // TODO: return commit;
+        return commit_t{"asdf"};
+    }
+    return std::nullopt;
 }
 
 }
