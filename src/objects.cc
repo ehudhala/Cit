@@ -11,7 +11,6 @@ struct serialize_visitor {
     }
 };
 
-// TODO: use boost::serialize.
 std::string serializer_t::serialize(const object_t& object) const {
     return boost::apply_visitor(serialize_visitor{}, object);
 }

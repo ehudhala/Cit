@@ -29,22 +29,51 @@ using ref_t = std::string;
  *         * Can't return a weak_ptr if we don't hold a stringstream.
  *     * The store owns the content is probably not relevant since we copy.
  */
+
+/**
+ * Represents a blob - which is a file.
+ */
 struct blob_t {
     std::string content;
 };
 
+/**
+ * Represents a commit.
+ * Points to the last commit in order to create a tree.
+ */
 struct commit_t {
     std::string description;
 };
 
+/**
+ * We treat all objects the same in Cit.
+ * They can all be serialized and saved.
+ */
 using object_t = boost::variant<blob_t, commit_t>;
 
 using optional_blob = boost::optional<blob_t>;
 using optional_commit = boost::optional<commit_t>;
 
+/**
+ * Used to serialize and deserialize objects.
+ * This implementation is simple, could be json / boost::serialize.
+ */
 struct serializer_t {
+    /**
+     * Serializes an object.
+     */
     std::string serialize(const object_t&) const;
+    /**
+     * Deserializes a blob.
+     * Returns an Optional which will contain the blob on success
+     * or be empty on failure to deserialize.
+     */
     optional_blob deserialize_blob(const std::string& serialized) const;
+    /**
+     * Deserializes a commit.
+     * Returns an Optional which will contain the commit on success,
+     * or be empty on failure to deserialize.
+     */
     optional_commit deserialize_commit(const std::string& serialized) const;
 };
 
