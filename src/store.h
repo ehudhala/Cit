@@ -17,13 +17,19 @@ namespace inmemory {
 
 using hash_func_t = std::function<hash_t(const std::string&)>;
 
+/**
+ * The heavy storage of Cit.
+ * Stores all the objects (blobs, commits, trees).
+ * Has a simple api - store and load.
+ * We have many loads in order to load back the type stored.
+ */
 template <class serializer_t>
 class object_store_t {
 public:
     object_store_t(hash_func_t hash_func, serializer_t serializer)
         : hash_func(hash_func), serializer(serializer) {}
 
-    hash_t save(const object_t&);
+    hash_t store(const object_t&);
 
     boost::optional<const std::string&> load_object(hash_t hash) const;
     optional_blob load_blob(hash_t) const;

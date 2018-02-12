@@ -5,7 +5,7 @@ namespace cit {
 namespace inmemory {
 
 template <class serializer_t>
-hash_t object_store_t<serializer_t>::save(const object_t& object) {
+hash_t object_store_t<serializer_t>::store(const object_t& object) {
     std::string serialized = serializer.serialize(object);
     hash_t hash = hash_func(serialized);
     objects_map[hash] = serialized;
