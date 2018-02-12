@@ -50,15 +50,6 @@ private:
     object_store_t& object_store;
 };
 
-class inmemory_ref_store_t {
-public:
-    hash_t get_hash(const ref_t&);
-    hash_t set_ref(const ref_t&, hash_t);
-
-    ref_t get_head();
-    void set_head(const ref_t&);
-};
-
 template <class index_t, class object_store_t, class ref_store_t>
 class store_t {
 public:
@@ -66,7 +57,6 @@ public:
             "The index should use the same object_store as the store.");
     index_t index;
     object_store_t objects;
-    ref_store_t refs;
 };
 
 }
