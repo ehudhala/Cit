@@ -2,8 +2,10 @@
 
 namespace cit {
 
+namespace inmemory {
+
 template <class serializer_t>
-hash_t inmemory_object_store_t<serializer_t>::save(const object_t& object) {
+hash_t object_store_t<serializer_t>::save(const object_t& object) {
     std::string serialized = serializer.serialize(object);
     hash_t hash = hash_func(serialized);
     objects_map[hash] = serialized;
@@ -11,7 +13,7 @@ hash_t inmemory_object_store_t<serializer_t>::save(const object_t& object) {
 }
 
 template <class serializer_t>
-boost::optional<const std::string&> inmemory_object_store_t<serializer_t>::load_object(hash_t hash) const {
+boost::optional<const std::string&> object_store_t<serializer_t>::load_object(hash_t hash) const {
     auto obj_it = objects_map.find(hash);
     if (obj_it != objects_map.end()) {
         return obj_it->second;
@@ -20,7 +22,7 @@ boost::optional<const std::string&> inmemory_object_store_t<serializer_t>::load_
 }
 
 template <class serializer_t>
-boost::optional<commit_t> inmemory_object_store_t<serializer_t>::load_commit(hash_t hash) const {
+optional_commit object_store_t<serializer_t>::load_commit(hash_t hash) const {
     auto serialized = load_object(hash);
     if (!serialized) {
         return boost::none;
@@ -29,7 +31,7 @@ boost::optional<commit_t> inmemory_object_store_t<serializer_t>::load_commit(has
 }
 
 template <class serializer_t>
-boost::optional<blob_t> inmemory_object_store_t<serializer_t>::load_blob(hash_t hash) const {
+optional_blob object_store_t<serializer_t>::load_blob(hash_t hash) const {
     boost::optional<const std::string&> serialized = load_object(hash);
     if (!serialized) {
         return boost::none;
@@ -37,4 +39,5 @@ boost::optional<blob_t> inmemory_object_store_t<serializer_t>::load_blob(hash_t 
     return serializer.deserialize_blob(*serialized);
 }
 
+}
 }

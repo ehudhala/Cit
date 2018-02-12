@@ -18,8 +18,8 @@ struct incrementing_hash_func {
     }
 };
 
-inmemory_object_store_t<serializer_t> inc_object_store() {
-    return inmemory_object_store_t<serializer_t>(incrementing_hash_func{}, serializer_t{});
+inmemory::object_store_t<serializer_t> inc_object_store() {
+    return inmemory::object_store_t<serializer_t>(incrementing_hash_func{}, serializer_t{});
 }
 
 TEST(inmemory_object_store, save_returns_hash) {
@@ -69,7 +69,7 @@ struct failing_deserializtion {
 };
 
 TEST(inmemory_object_store, load_deserializtion_fails) {
-    inmemory_object_store_t<failing_deserializtion> objects(incrementing_hash_func{}, failing_deserializtion{});
+    inmemory::object_store_t<failing_deserializtion> objects(incrementing_hash_func{}, failing_deserializtion{});
     commit_t commit{"a8"};
     cit::hash_t hash = objects.save(commit);
     EXPECT_TRUE(bool(objects.load_object(hash)));

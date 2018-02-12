@@ -13,42 +13,44 @@
 
 namespace cit {
 
-// Should be in namespace inmemory.
+namespace inmemory {
+
+using hash_func_t = std::function<hash_t(const std::string&)>;
+
 template <class serializer_t>
-class inmemory_object_store_t {
+class object_store_t {
 public:
-    inmemory_object_store_t(
-            std::function<hash_t(const std::string&)> hash_func,
-            serializer_t serializer)
+    object_store_t(hash_func_t hash_func, serializer_t serializer)
         : hash_func(hash_func), serializer(serializer) {}
 
     hash_t save(const object_t&);
 
     boost::optional<const std::string&> load_object(hash_t hash) const;
-    boost::optional<commit_t> load_commit(hash_t) const;
-    boost::optional<blob_t> load_blob(hash_t) const;
+    optional_blob load_blob(hash_t) const;
+    optional_commit load_commit(hash_t) const;
 private:
-    std::function<hash_t(const std::string&)> hash_func;
+    hash_func_t hash_func;
     serializer_t serializer;
 
     std::map<hash_t, std::string> objects_map;
 };
 
-// TODO: inmemory_index, then support add.
-// Maybe its time to split the code up to files.
+// TODO: index, then support add.
 
 using blob_names_t = std::map<std::string, hash_t>;
 
 template <class object_store_t, class blob_t>
-class inmemory_index_t {
+class index_t {
     using objecty_store = object_store_t;
 public:
-    inmemory_index_t(object_store_t&);
+    index_t(object_store_t&);
     hash_t add(const std::string& name, blob_t);
 private:
     blob_names_t blob_names;
     object_store_t& object_store;
 };
+
+}
 
 template <class index_t, class object_store_t, class ref_store_t>
 class store_t {
