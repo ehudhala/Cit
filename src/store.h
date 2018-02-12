@@ -68,19 +68,39 @@ private:
     std::map<hash_t, std::string> objects_map;
 };
 
-// TODO: index, then support add.
+// TODO: index, then support add with a client.
 
+using file_name_t = std::string;
 using blob_names_t = std::map<std::string, hash_t>;
 
-template <class object_store_t, class blob_t>
+/**
+ * Used as the index for Cit.
+ * Contains the currently staged files.
+ * Adding a file to the index stores the blob, and saves its new state.
+ */
+template <class object_store_t>
 class index_t {
-    using objecty_store = object_store_t;
 public:
-    index_t(object_store_t&);
-    hash_t add(const std::string& name, blob_t);
-private:
+    /**
+     * The index is injected with the object_store it should store objects to.
+     */
+    index_t(std::shared_ptr<object_store_t> object_store)
+        : object_store(object_store) {}
+
+    /**
+     * Adds a file to the index.
+     * Saves it both to the object_store, and to the index.
+     */
+    hash_t add(const file_name_t& name, blob_t);
+
+    /**
+     * The index contents.
+     * Contains all the current files in the index.
+     */
     blob_names_t blob_names;
-    object_store_t& object_store;
+
+private:
+    std::shared_ptr<object_store_t> object_store;
 };
 
 }
@@ -88,8 +108,6 @@ private:
 template <class index_t, class object_store_t, class ref_store_t>
 class store_t {
 public:
-    static_assert(std::is_same<typename index_t::object_store, object_store_t>::value, 
-            "The index should use the same object_store as the store.");
     index_t index;
     object_store_t objects;
 };
