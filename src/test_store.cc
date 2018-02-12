@@ -22,19 +22,19 @@ inmemory::object_store_t<serializer_t> inc_object_store() {
     return inmemory::object_store_t<serializer_t>(incrementing_hash_func{}, serializer_t{});
 }
 
-TEST(inmemory_object_store, store_returns_hash) {
+TEST(inmemory_object_store_store, returns_hash) {
     auto objects(inc_object_store());
     EXPECT_EQ(0, objects.store(commit_t{"a3"}));
     EXPECT_EQ(1, objects.store(commit_t{"a4"}));
 }
 
-TEST(inmemory_object_store, load_unexisting_hash) {
+TEST(inmemory_object_store_load, unexisting_hash) {
     auto objects(inc_object_store());
     auto object(objects.load_object(0));
     EXPECT_FALSE(bool(object));
 }
 
-TEST(inmemory_object_store, load_returns_stored_string) {
+TEST(inmemory_object_store_load, returns_stored_string) {
     auto objects(inc_object_store());
     commit_t commit{"a5"};
     cit::hash_t hash = objects.store(commit);
@@ -43,7 +43,7 @@ TEST(inmemory_object_store, load_returns_stored_string) {
     EXPECT_EQ(serializer.serialize(commit), *loaded);
 }
 
-TEST(inmemory_object_store, load_commit_returns_stored) {
+TEST(inmemory_object_store_load, commit_returns_stored) {
     auto objects(inc_object_store());
     commit_t commit{"a6"};
     cit::hash_t hash = objects.store(commit);
@@ -52,7 +52,7 @@ TEST(inmemory_object_store, load_commit_returns_stored) {
     EXPECT_TRUE(commit == *loaded_commit);
 }
 
-TEST(inmemory_object_store, load_blob_returns_stored) {
+TEST(inmemory_object_store_load, blob_returns_stored) {
     auto objects(inc_object_store());
     blob_t blob{"a7"};
     cit::hash_t hash = objects.store(blob);
@@ -68,7 +68,7 @@ struct failing_deserializtion {
     }
 };
 
-TEST(inmemory_object_store, load_deserializtion_fails) {
+TEST(inmemory_object_store_load, deserializtion_fails) {
     inmemory::object_store_t<failing_deserializtion> objects(incrementing_hash_func{}, failing_deserializtion{});
     commit_t commit{"a8"};
     cit::hash_t hash = objects.store(commit);

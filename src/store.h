@@ -22,18 +22,45 @@ using hash_func_t = std::function<hash_t(const std::string&)>;
  * Stores all the objects (blobs, commits, trees).
  * Has a simple api - store and load.
  * We have many loads in order to load back the type stored.
+ * This object store stores all the objects in memory.
  */
 template <class serializer_t>
 class object_store_t {
 public:
+    /**
+     * The hash function to use, and the serializer to use
+     * are both dynamically injected to the store.
+     */
     object_store_t(hash_func_t hash_func, serializer_t serializer)
         : hash_func(hash_func), serializer(serializer) {}
 
+    /**
+     * Stores any object.
+     * Returns the hash (id) of the stored object.
+     */
     hash_t store(const object_t&);
 
-    boost::optional<const std::string&> load_object(hash_t hash) const;
+    /**
+     * Loads a blob from the storage.
+     * Returns the blob on success, and empty on either:
+     * * The object is not found.
+     * * The object cannot be deserialized as a blob.
+     */
     optional_blob load_blob(hash_t) const;
+
+    /**
+     * Loads a commit from the storage.
+     * Returns the commit on success, and empty on either:
+     * * The object is not found.
+     * * The object cannot be deserialized as a commit.
+     */
     optional_commit load_commit(hash_t) const;
+
+    /**
+     * Loads an object from the storage.
+     * Returns the object on success, and empty when it is not found.
+     */
+    boost::optional<const std::string&> load_object(hash_t hash) const;
 private:
     hash_func_t hash_func;
     serializer_t serializer;
