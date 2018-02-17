@@ -10,6 +10,7 @@
 #include "boost/optional.hpp"
 
 #include "objects.h"
+#include "working_tree.h"
 
 namespace cit {
 
@@ -78,7 +79,6 @@ private:
     std::map<hash_t, std::string> objects_map;
 };
 
-using file_name_t = std::string;
 using blob_names_t = std::map<std::string, hash_t>;
 
 /**
@@ -98,7 +98,7 @@ public:
      * Adds a file to the index.
      * Saves it both to the object_store, and to the index.
      */
-    hash_t add(const file_name_t&, const blob_t&);
+    hash_t add(const name_t&, const blob_t&);
 
     /**
      * The index contents.

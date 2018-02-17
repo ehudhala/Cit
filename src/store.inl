@@ -1,5 +1,7 @@
 #include "store.h"
 
+#include "utils.h"
+
 namespace cit {
 
 namespace inmemory {
@@ -14,11 +16,7 @@ hash_t object_store_t<serializer_t>::store(const object_t& object) {
 
 template <class serializer_t>
 boost::optional<const std::string&> object_store_t<serializer_t>::load_object(hash_t hash) const {
-    auto obj_it = objects_map.find(hash);
-    if (obj_it != objects_map.end()) {
-        return obj_it->second;
-    }
-    return boost::none;
+    return optional_read<hash_t, std::string, const std::string&>(objects_map, hash);
 }
 
 template <class serializer_t>
@@ -44,7 +42,7 @@ optional_blob object_store_t<serializer_t>::load_blob(hash_t hash) const {
 }
 
 template <class object_store_t>
-hash_t index_t<object_store_t>::add(const file_name_t& name, const blob_t& blob) {
+hash_t index_t<object_store_t>::add(const name_t& name, const blob_t& blob) {
     hash_t hash = objects->store(blob);
     blob_names[name] = hash;
     return hash;
