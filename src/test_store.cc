@@ -7,28 +7,6 @@
 
 using namespace cit;
 
-using object_store_t = inmemory::object_store_t<serializer_t>;
-using index_t = inmemory::index_t<object_store_t>;
-
-struct incrementing_hash_func {
-    /**
-     * This obviously isn't a real hash function,
-     * but it is enough for our tests.
-     */
-    hash_t hash = 0;
-    hash_t operator()(const std::string&) {
-        return hash++;
-    }
-};
-
-object_store_t inc_object_store() {
-    return inmemory::object_store_t<serializer_t>(incrementing_hash_func{});
-}
-
-index_t inc_index() {
-    return index_t{std::make_shared<object_store_t>(inc_object_store())};
-}
-
 TEST(inmemory_object_store_store, returns_hash) {
     auto objects(inc_object_store());
     EXPECT_EQ(0, objects.store(commit_t{"a3"}));

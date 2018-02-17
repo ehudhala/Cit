@@ -113,10 +113,12 @@ public:
 }
 
 template <class index_t, class object_store_t>
-class store_t {
-public:
+struct store_t {
+    store_t(index_t index, std::shared_ptr<object_store_t> objects)
+        : index(index), objects(objects) {}
+
     index_t index;
-    object_store_t objects;
+    std::shared_ptr<object_store_t> objects;
     // TODO: ref_store.
 };
 
