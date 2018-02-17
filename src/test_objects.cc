@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 
 #include "objects.h"
-#include "store.h"
 
 #include "test_utils.h"
 

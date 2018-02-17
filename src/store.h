@@ -16,6 +16,8 @@ namespace cit {
 namespace inmemory {
 
 using hash_func_t = std::function<hash_t(const std::string&)>;
+template <class object>
+using deserialize_func = std::function<boost::optional<object>(const std::string&)>;
 
 /**
  * The heavy storage of Cit.
@@ -31,8 +33,7 @@ public:
      * The hash function to use, and the serializer to use
      * are both dynamically injected to the store.
      */
-    object_store_t(hash_func_t hash_func, serializer_t serializer)
-        : hash_func(hash_func), serializer(serializer) {}
+    object_store_t(hash_func_t hash_func) : hash_func(hash_func) {}
 
     /**
      * Stores any object.
@@ -61,9 +62,18 @@ public:
      * Returns the object on success, and empty when it is not found.
      */
     boost::optional<const std::string&> load_object(hash_t hash) const;
+
+    /**
+     * Loads an object from the storage and deserializes it.
+     * Returns the object on success, and empty on either:
+     * * The object is not found.
+     * * The object cannot be deserialized.
+     */
+    template <class object>
+    boost::optional<object> load(hash_t hash, deserialize_func<object>) const;
+
 private:
     hash_func_t hash_func;
-    serializer_t serializer;
 
     std::map<hash_t, std::string> objects_map;
 };
@@ -91,7 +101,7 @@ public:
      * Adds a file to the index.
      * Saves it both to the object_store, and to the index.
      */
-    hash_t add(const file_name_t& name, blob_t);
+    hash_t add(const file_name_t&, const blob_t&);
 
     /**
      * The index contents.
