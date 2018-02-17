@@ -7,6 +7,9 @@
 
 using namespace cit;
 
+using object_store_t = inmemory::object_store_t<serializer_t>;
+using index_t = inmemory::index_t<object_store_t>;
+
 struct incrementing_hash_func {
     /**
      * This obviously isn't a real hash function,
@@ -18,8 +21,12 @@ struct incrementing_hash_func {
     }
 };
 
-inmemory::object_store_t<serializer_t> inc_object_store() {
+object_store_t inc_object_store() {
     return inmemory::object_store_t<serializer_t>(incrementing_hash_func{});
+}
+
+index_t inc_index() {
+    return index_t{std::make_shared<object_store_t>(inc_object_store())};
 }
 
 TEST(inmemory_object_store_store, returns_hash) {
@@ -76,4 +83,27 @@ TEST(inmemory_object_store_load, deserializtion_fails) {
     cit::hash_t hash = objects.store(commit);
     EXPECT_TRUE(bool(objects.load_object(hash)));
     EXPECT_FALSE(bool(objects.load_commit(hash)));
+}
+
+TEST(index_add, returns_hash) {
+    index_t index{inc_index()};
+    blob_t blob{"asdf"};
+    auto hash = index.add("file", blob);
+    ASSERT_EQ(0, hash);
+}
+
+TEST(index_add, serializes_to_object_store) {
+    index_t index{inc_index()};
+    blob_t blob{"asdf"};
+    auto hash = index.add("file", blob);
+    auto loaded(index.objects->load_blob(hash));
+    ASSERT_TRUE(bool(loaded));
+    EXPECT_TRUE(blob == *loaded);
+}
+
+TEST(index_add, adds_to_blob_names) {
+    index_t index{inc_index()};
+    blob_t blob{"asdf"};
+    auto hash = index.add("file", blob);
+    EXPECT_EQ(hash, index.blob_names["file"]);
 }

@@ -92,8 +92,7 @@ public:
     /**
      * The index is injected with the object_store it should store objects to.
      */
-    index_t(std::shared_ptr<object_store_t> object_store)
-        : object_store(object_store) {}
+    index_t(std::shared_ptr<object_store_t> objects) : objects(objects) {}
 
     /**
      * Adds a file to the index.
@@ -107,8 +106,8 @@ public:
      */
     blob_names_t blob_names;
 
-private:
-    std::shared_ptr<object_store_t> object_store;
+// private: // Should be private, but needed for tests.
+    std::shared_ptr<object_store_t> objects;
 };
 
 }

@@ -43,5 +43,12 @@ optional_blob object_store_t<serializer_t>::load_blob(hash_t hash) const {
     return load(hash, deserialize);
 }
 
+template <class object_store_t>
+hash_t index_t<object_store_t>::add(const file_name_t& name, const blob_t& blob) {
+    hash_t hash = objects->store(blob);
+    blob_names[name] = hash;
+    return hash;
+}
+
 }
 }
