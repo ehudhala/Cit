@@ -78,8 +78,6 @@ private:
     std::map<hash_t, std::string> objects_map;
 };
 
-// TODO: index, then support add with a client.
-
 using file_name_t = std::string;
 using blob_names_t = std::map<std::string, hash_t>;
 

@@ -40,7 +40,7 @@ TEST(inmemory_object_store_load, returns_stored_string) {
     cit::hash_t hash = objects.store(commit);
     auto loaded(objects.load_object(hash));
     ASSERT_TRUE(bool(loaded));
-    EXPECT_EQ(serializer.serialize(commit), *loaded);
+    EXPECT_EQ(serializer_t::serialize(commit), *loaded);
 }
 
 TEST(inmemory_object_store_load, commit_returns_stored) {

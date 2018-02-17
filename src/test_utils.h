@@ -1,7 +1,5 @@
 #include "objects.h"
 
-static cit::serializer_t serializer{};
-
 /**
  * Used for tests, equals means their serialization is equal.
  */
