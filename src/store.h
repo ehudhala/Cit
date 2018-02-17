@@ -112,11 +112,12 @@ public:
 
 }
 
-template <class index_t, class object_store_t, class ref_store_t>
+template <class index_t, class object_store_t>
 class store_t {
 public:
     index_t index;
     object_store_t objects;
+    // TODO: ref_store.
 };
 
 }
