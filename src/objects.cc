@@ -11,15 +11,15 @@ struct serialize_visitor {
     }
 };
 
-std::string serializer_t::serialize(const object_t& object) const {
+std::string serializer_t::serialize(const object_t& object) {
     return boost::apply_visitor(serialize_visitor{}, object);
 }
 
-optional_blob serializer_t::deserialize_blob(const std::string& serialized) const {
+optional_blob serializer_t::deserialize_blob(const std::string& serialized) {
     return blob_t{serialized};
 }
 
-optional_commit serializer_t::deserialize_commit(const std::string& serialized) const {
+optional_commit serializer_t::deserialize_commit(const std::string& serialized) {
     return commit_t{serialized};
 }
 

@@ -19,7 +19,7 @@ struct incrementing_hash_func {
 };
 
 inmemory::object_store_t<serializer_t> inc_object_store() {
-    return inmemory::object_store_t<serializer_t>(incrementing_hash_func{}, serializer_t{});
+    return inmemory::object_store_t<serializer_t>(incrementing_hash_func{});
 }
 
 TEST(inmemory_object_store_store, returns_hash) {
@@ -61,15 +61,17 @@ TEST(inmemory_object_store_load, blob_returns_stored) {
     EXPECT_TRUE(blob == *loaded);
 }
 
+// TODO: add tests to the load method (fail serialization, success on serialization)
+
 struct failing_deserializtion {
-    std::string serialize(const object_t&) const {return "";}
-    boost::optional<commit_t> deserialize_commit(const std::string&) const {
+    static std::string serialize(const object_t&) {return "";}
+    static boost::optional<commit_t> deserialize_commit(const std::string&) {
         return boost::none;
     }
 };
 
 TEST(inmemory_object_store_load, deserializtion_fails) {
-    inmemory::object_store_t<failing_deserializtion> objects(incrementing_hash_func{}, failing_deserializtion{});
+    inmemory::object_store_t<failing_deserializtion> objects(incrementing_hash_func{});
     commit_t commit{"a8"};
     cit::hash_t hash = objects.store(commit);
     EXPECT_TRUE(bool(objects.load_object(hash)));

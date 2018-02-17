@@ -62,19 +62,19 @@ struct serializer_t {
     /**
      * Serializes an object.
      */
-    std::string serialize(const object_t&) const;
+    static std::string serialize(const object_t&);
     /**
      * Deserializes a blob.
      * Returns an Optional which will contain the blob on success
      * or be empty on failure to deserialize.
      */
-    optional_blob deserialize_blob(const std::string& serialized) const;
+    static optional_blob deserialize_blob(const std::string& serialized);
     /**
      * Deserializes a commit.
      * Returns an Optional which will contain the commit on success,
      * or be empty on failure to deserialize.
      */
-    optional_commit deserialize_commit(const std::string& serialized) const;
+    static optional_commit deserialize_commit(const std::string& serialized);
 };
 
 }
