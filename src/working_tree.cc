@@ -16,5 +16,10 @@ boost::optional<const std::string&> working_tree_t::read(const name_t& name) {
     return optional_read<name_t, std::string, const std::string&>(working_tree, name);
 }
 
+bool working_tree_t::contains(const name_t& name) {
+    // Read returns a const-ref, so we can safely use its implementation and discard the result.
+    return bool(read(name));
+}
+
 }
 }

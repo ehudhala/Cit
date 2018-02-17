@@ -37,6 +37,11 @@ public:
      */
     boost::optional<const std::string&> read(const name_t&);
 
+    /**
+     * Checks whether the working tree contains the given name.
+     */
+    bool contains(const name_t&);
+
 private:
     std::map<name_t, std::string> working_tree;
 };
