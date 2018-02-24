@@ -35,6 +35,7 @@ using ref_t = std::string;
  */
 struct blob_t {
     std::string content;
+    // TODO: content should be std::vector<char>;
 };
 
 /**
