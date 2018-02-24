@@ -46,8 +46,6 @@ TEST(inmemory_object_store_load, blob_returns_stored) {
     EXPECT_TRUE(blob == *loaded);
 }
 
-// TODO: add tests to the load method (fail serialization, success on serialization)
-
 struct failing_deserializtion {
     static std::string serialize(const object_t&) {return "";}
     template <class Object>
