@@ -12,15 +12,16 @@ object_store_t inc_object_store() {
 }
 
 index_t inc_index() {
-    return index_t{object_store_t(inc_object_store())};
+    return index_t{inc_object_store()};
 }
 
-// index_t inc_index(std::shared_ptr<object_store_t> objects) {
-//     return index_t{std::make_shared<object_store_t>(objects)};
-// }
+store inc_store() {
+    auto objects{inc_object_store()};
+    auto index{inc_index()};
+    return store(std::move(index));
+}
 
-// store inc_store() {
-//     auto objects{std::make_shared<object_store_t>(inc_object_store())};
-//     auto index{inc_index(objects)};
-//     return store(std::move(index), std::move(objects));
-// }
+repo inc_repo(working_tree_t tree) {
+    return repo{inc_store(), tree};
+}
+
