@@ -10,8 +10,6 @@
 
 namespace cit {
     
-using optional_hash = boost::optional<hash_t>;
-
 // Add, Commit, Checkout, Status.
 // We need WorkingTree.
 template <class store_t, class working_tree_t>

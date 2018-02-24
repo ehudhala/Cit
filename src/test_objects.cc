@@ -6,25 +6,19 @@
 
 using namespace cit;
 
-TEST(serializer_serialize, blob) {
-    blob_t blob{"a1"};
-    EXPECT_EQ("a1", serializer_t::serialize(blob));
+TEST(serializer, blob_deserialized_equal_to_serialized) {
+    blob_t blob{"content"};
+    auto serialized{serializer_t::serialize(blob)};
+    auto deserialized{serializer_t::deserialize<blob_t>(serialized)};
+    ASSERT_TRUE(bool(deserialized));
+    EXPECT_TRUE(blob_t{"content"} == *deserialized);
 }
 
-TEST(serializer_serialize, commit) {
-    commit_t commit{"a2"};
-    EXPECT_EQ("a2", serializer_t::serialize(commit));
+TEST(serializer, commit_deserialized_equal_to_serialized) {
+    commit_t commit{"description"};
+    auto serialized{serializer_t::serialize(commit)};
+    auto deserialized{serializer_t::deserialize<commit_t>(serialized)};
+    ASSERT_TRUE(bool(deserialized));
+    EXPECT_TRUE(commit_t{"description"} == *deserialized);
 }
-
-TEST(serializer_deserialize, blob) {
-    auto blob{serializer_t::deserialize_blob("b1")};
-    ASSERT_TRUE(bool(blob));
-    EXPECT_TRUE(blob_t{"b1"} == *blob);
-}
-
-TEST(serializer_deserialize, commit) {
-    auto commit{serializer_t::deserialize_commit("b2")};
-    ASSERT_TRUE(bool(commit));
-    EXPECT_TRUE(commit_t{"b2"} == *commit);
-}
-
+// TODO: test failure.

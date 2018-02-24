@@ -18,7 +18,7 @@ driver: $(NO_TEST_OBJ)
 	$(CXX) $^ -o driver
 
 main: $(OBJ)
-	$(CXX) $^ -lgtest -lgtest_main -lpthread -o main
+	$(CXX) $^ -lgtest -lgtest_main -lpthread -lboost_serialization -o main
 
 test: main
 	./main

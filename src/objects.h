@@ -10,7 +10,7 @@
 namespace cit {
 
 using hash_t = std::size_t;
-using ref_t = std::string;
+using optional_hash = boost::optional<hash_t>;
 
 /*
  * TODO: decide on the ownership model of the content stream.
@@ -43,7 +43,15 @@ struct blob_t {
  * Points to the last commit in order to create a tree.
  */
 struct commit_t {
+    commit_t();
+    commit_t(std::string description);
+    commit_t(std::string description, hash_t parent_hash);
+
     std::string description;
+    /**
+     * The root commit doesn't have a parent hash.
+     */
+    optional_hash parent_hash;
 };
 
 /**
@@ -64,18 +72,19 @@ struct serializer_t {
      * Serializes an object.
      */
     static std::string serialize(const object_t&);
+
     /**
-     * Deserializes a blob.
-     * Returns an Optional which will contain the blob on success
+     * Deserializes the templated object.
+     * Returns an Optional which will contain the object on success
      * or be empty on failure to deserialize.
      */
-    static optional_blob deserialize_blob(const std::string& serialized);
-    /**
-     * Deserializes a commit.
-     * Returns an Optional which will contain the commit on success,
-     * or be empty on failure to deserialize.
-     */
+    template <class Object>
+    static boost::optional<Object> deserialize(const std::string& serialized);
+
+    // TODO: turn usages of deserialize_commit and blob to deserialize<commit_t>
     static optional_commit deserialize_commit(const std::string& serialized);
+
+    static optional_blob deserialize_blob(const std::string& serialized);
 };
 
 }
