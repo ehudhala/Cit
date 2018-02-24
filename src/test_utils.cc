@@ -2,8 +2,24 @@
 
 using namespace cit;
 
+struct object_equals {
+    bool operator()(const cit::blob_t& blob, const cit::blob_t& other) const {
+        return blob.content == other.content;
+    }
+
+    bool operator()(const cit::commit_t& commit, const cit::commit_t& other) const {
+        return commit.description == other.description
+            && commit.parent_hash == other.parent_hash;
+    }
+
+    template <class Object, class Other>
+    bool operator()(const Object&, const Other&) const {
+        return false;
+    }
+};
+
 bool operator==(const cit::object_t& obj, const cit::object_t& other) {
-    return cit::serializer_t::serialize(obj) == cit::serializer_t::serialize(other);
+    return boost::apply_visitor(object_equals{}, obj, other);
 }
 
 
