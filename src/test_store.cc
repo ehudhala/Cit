@@ -41,7 +41,7 @@ TEST(inmemory_object_store_load, blob_returns_stored) {
     auto objects(inc_object_store());
     blob_t blob{"a7"};
     cit::hash_t hash = objects.store(blob);
-    auto loaded(objects.load<commit_t>(hash));
+    auto loaded(objects.load<blob_t>(hash));
     ASSERT_TRUE(bool(loaded));
     EXPECT_TRUE(blob == *loaded);
 }
