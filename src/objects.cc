@@ -2,6 +2,7 @@
 
 #include "boost/archive/text_oarchive.hpp"
 #include "boost/archive/text_iarchive.hpp"
+#include "boost/archive/archive_exception.hpp"
 
 #include "objects.h"
 
@@ -51,12 +52,16 @@ std::string serializer_t::serialize(const object_t& object) {
 
 template <class Object>
 boost::optional<Object> serializer_t::deserialize(const std::string& serialized) {
-    std::istringstream is(serialized);
-    boost::archive::text_iarchive ia(is);
-    Object object;
-    ia >> object;
-    return object;
-    // TODO: error handling.
+    try {
+        std::istringstream is(serialized);
+        boost::archive::text_iarchive ia(is);
+        Object object;
+        ia >> object;
+        return object;
+    }
+    catch (boost::archive::archive_exception) {
+        return boost::none;
+    }
 }
 
 
