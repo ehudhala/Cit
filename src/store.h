@@ -43,26 +43,19 @@ public:
     hash_t store(const object_t&);
 
     /**
-     * Loads a blob from the storage.
-     * Returns the blob on success, and empty on either:
+     * Loads an object from the storage.
+     * Returns the object on success, and empty on either:
      * * The object is not found.
-     * * The object cannot be deserialized as a blob.
+     * * The object cannot be deserialized.
      */
-    optional_blob load_blob(hash_t) const;
-
-    /**
-     * Loads a commit from the storage.
-     * Returns the commit on success, and empty on either:
-     * * The object is not found.
-     * * The object cannot be deserialized as a commit.
-     */
-    optional_commit load_commit(hash_t) const;
+    template <class Object>
+    boost::optional<Object> load(hash_t hash) const;
 
     /**
      * Loads an object from the storage.
      * Returns the object on success, and empty when it is not found.
      */
-    boost::optional<const std::string&> load_object(hash_t hash) const;
+    boost::optional<const std::string&> raw_load(hash_t hash) const;
 
 private:
     /**
@@ -71,8 +64,8 @@ private:
      * * The object is not found.
      * * The object cannot be deserialized.
      */
-    template <class object>
-    boost::optional<object> deserialize_load(hash_t hash, deserialize_func<object>) const;
+    template <class Object>
+    boost::optional<Object> deserialize_load(hash_t hash, deserialize_func<Object>) const;
 
     hash_func_t hash_func;
 

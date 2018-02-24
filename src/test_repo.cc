@@ -13,7 +13,7 @@ TEST(repo_add, adds_blob_to_index) {
     auto r{inc_repo(working_tree_t{{{"name", "content"}}})};
     auto hash = r.add("name");
     ASSERT_TRUE(bool(hash));
-    EXPECT_TRUE(blob_t{"content"} == *(r.store.get_objects().load_blob(*hash)));
+    EXPECT_TRUE(blob_t{"content"} == *(r.store.get_objects().load<blob_t>(*hash)));
     auto it = r.store.index.blob_names.find("name");
     ASSERT_TRUE(it != r.store.index.blob_names.end());
     EXPECT_EQ(hash, it->second);

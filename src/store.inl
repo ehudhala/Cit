@@ -15,14 +15,14 @@ hash_t object_store_t<serializer_t>::store(const object_t& object) {
 }
 
 template <class serializer_t>
-boost::optional<const std::string&> object_store_t<serializer_t>::load_object(hash_t hash) const {
+boost::optional<const std::string&> object_store_t<serializer_t>::raw_load(hash_t hash) const {
     return optional_read<hash_t, std::string, const std::string&>(objects_map, hash);
 }
 
 template <class serializer_t>
-template <class object>
-boost::optional<object> object_store_t<serializer_t>::deserialize_load(hash_t hash, deserialize_func<object> deserialize) const {
-    auto serialized = load_object(hash);
+template <class Object>
+boost::optional<Object> object_store_t<serializer_t>::deserialize_load(hash_t hash, deserialize_func<Object> deserialize) const {
+    auto serialized = raw_load(hash);
     if (!serialized) {
         return boost::none;
     }
@@ -30,14 +30,9 @@ boost::optional<object> object_store_t<serializer_t>::deserialize_load(hash_t ha
 }
 
 template <class serializer_t>
-optional_commit object_store_t<serializer_t>::load_commit(hash_t hash) const {
-    deserialize_func<commit_t> deserialize = serializer_t::template deserialize<commit_t>;
-    return deserialize_load(hash, deserialize);
-}
-
-template <class serializer_t>
-optional_blob object_store_t<serializer_t>::load_blob(hash_t hash) const {
-    deserialize_func<blob_t> deserialize{serializer_t::template deserialize<blob_t>};
+template <class Object>
+boost::optional<Object> object_store_t<serializer_t>::load(hash_t hash) const {
+    deserialize_func<Object> deserialize = serializer_t::template deserialize<Object>;
     return deserialize_load(hash, deserialize);
 }
 
