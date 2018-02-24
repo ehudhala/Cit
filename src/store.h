@@ -64,6 +64,7 @@ public:
      */
     boost::optional<const std::string&> load_object(hash_t hash) const;
 
+private:
     /**
      * Loads an object from the storage and deserializes it.
      * Returns the object on success, and empty on either:
@@ -71,9 +72,8 @@ public:
      * * The object cannot be deserialized.
      */
     template <class object>
-    boost::optional<object> load(hash_t hash, deserialize_func<object>) const;
+    boost::optional<object> deserialize_load(hash_t hash, deserialize_func<object>) const;
 
-private:
     hash_func_t hash_func;
 
     std::map<hash_t, std::string> objects_map;
