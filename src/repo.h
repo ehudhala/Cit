@@ -26,7 +26,7 @@ public:
      */
     optional_hash add(const name_t&);
 
-private:
+// private:
     store_t store;
     working_tree_t working_tree;
 };

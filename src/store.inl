@@ -49,4 +49,10 @@ hash_t index_t<object_store_t>::add(const name_t& name, const blob_t& blob) {
 }
 
 }
+
+template <class index_t>
+typename store_t<index_t>::object_store& store_t<index_t>::get_objects() {
+    return index.objects;
+}
+
 }

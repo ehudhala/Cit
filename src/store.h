@@ -118,9 +118,7 @@ struct store_t {
     store_t(index_t index)
         : index(index) {}
 
-    object_store& get_objects() const {
-        return index.objects;
-    }
+    object_store& get_objects();
 
     index_t index;
     // TODO: ref_store.
