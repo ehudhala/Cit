@@ -3,6 +3,7 @@
 #include "boost/archive/text_oarchive.hpp"
 #include "boost/archive/text_iarchive.hpp"
 #include "boost/archive/archive_exception.hpp"
+#include "boost/serialization/optional.hpp"
 
 #include "objects.h"
 
@@ -20,6 +21,7 @@ template<class Archive>
 void serialize(Archive& ar, cit::commit_t& commit, const unsigned int)
 {
     ar & commit.description;
+    ar & commit.parent_hash;
 }
 
 }
@@ -37,8 +39,8 @@ commit_t::commit_t(std::string description, hash_t parent_hash)
     : description{description}, parent_hash{parent_hash} {}
 
 struct serialize_visitor {
-    template <class object_t>
-    std::string operator()(const object_t& object) const {
+    template <class Object>
+    std::string operator()(const Object& object) const {
         std::ostringstream os;
         boost::archive::text_oarchive oa(os);
         oa << object;
