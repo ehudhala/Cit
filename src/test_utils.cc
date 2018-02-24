@@ -12,7 +12,7 @@ object_store_t inc_object_store() {
 }
 
 index_t inc_index() {
-    return index_t{std::make_shared<object_store_t>(inc_object_store())};
+    return index_t{object_store_t(inc_object_store())};
 }
 
 // index_t inc_index(std::shared_ptr<object_store_t> objects) {

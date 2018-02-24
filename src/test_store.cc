@@ -74,7 +74,7 @@ TEST(index_add, serializes_to_object_store) {
     index_t index{inc_index()};
     blob_t blob{"asdf"};
     auto hash = index.add("file", blob);
-    auto loaded(index.objects->load_blob(hash));
+    auto loaded(index.objects.load_blob(hash));
     ASSERT_TRUE(bool(loaded));
     EXPECT_TRUE(blob == *loaded);
 }

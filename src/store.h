@@ -89,10 +89,11 @@ using blob_names_t = std::map<std::string, hash_t>;
 template <class object_store_t>
 class index_t {
 public:
+    using object_store = object_store_t;
     /**
      * The index is injected with the object_store it should store objects to.
      */
-    index_t(std::shared_ptr<object_store_t> objects) : objects(objects) {}
+    index_t(object_store_t objects) : objects(objects) {}
 
     /**
      * Adds a file to the index.
@@ -106,19 +107,22 @@ public:
      */
     blob_names_t blob_names;
 
-// private: // Should be private, but needed for tests.
-    std::shared_ptr<object_store_t> objects;
+    object_store_t objects;
 };
 
 }
 
-template <class index_t, class object_store_t>
+template <class index_t>
 struct store_t {
-    store_t(index_t index, std::shared_ptr<object_store_t> objects)
-        : index(index), objects(objects) {}
+    using object_store = typename index_t::object_store;
+    store_t(index_t index)
+        : index(index) {}
+
+    object_store& get_objects() const {
+        return index.objects;
+    }
 
     index_t index;
-    std::shared_ptr<object_store_t> objects;
     // TODO: ref_store.
 };
 

@@ -43,7 +43,7 @@ optional_blob object_store_t<serializer_t>::load_blob(hash_t hash) const {
 
 template <class object_store_t>
 hash_t index_t<object_store_t>::add(const name_t& name, const blob_t& blob) {
-    hash_t hash = objects->store(blob);
+    hash_t hash = objects.store(blob);
     blob_names[name] = hash;
     return hash;
 }

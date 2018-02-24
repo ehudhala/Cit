@@ -14,7 +14,7 @@ bool operator==(const cit::object_t& obj, const cit::object_t& other);
 
 using object_store_t = inmemory::object_store_t<serializer_t>;
 using index_t = inmemory::index_t<object_store_t>;
-using store = store_t<index_t, object_store_t>;
+using store = store_t<index_t>;
 using repo = repo_t<store, inmemory::working_tree_t>;
 
 struct incrementing_hash_func {
