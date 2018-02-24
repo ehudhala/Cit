@@ -80,11 +80,6 @@ struct serializer_t {
      */
     template <class Object>
     static boost::optional<Object> deserialize(const std::string& serialized);
-
-    // TODO: turn usages of deserialize_commit and blob to deserialize<commit_t>
-    static optional_commit deserialize_commit(const std::string& serialized);
-
-    static optional_blob deserialize_blob(const std::string& serialized);
 };
 
 }

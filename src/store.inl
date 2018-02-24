@@ -31,13 +31,13 @@ boost::optional<object> object_store_t<serializer_t>::deserialize_load(hash_t ha
 
 template <class serializer_t>
 optional_commit object_store_t<serializer_t>::load_commit(hash_t hash) const {
-    deserialize_func<commit_t> deserialize = serializer_t::deserialize_commit;
+    deserialize_func<commit_t> deserialize = serializer_t::template deserialize<commit_t>;
     return deserialize_load(hash, deserialize);
 }
 
 template <class serializer_t>
 optional_blob object_store_t<serializer_t>::load_blob(hash_t hash) const {
-    deserialize_func<blob_t> deserialize = serializer_t::deserialize_blob;
+    deserialize_func<blob_t> deserialize{serializer_t::template deserialize<blob_t>};
     return deserialize_load(hash, deserialize);
 }
 

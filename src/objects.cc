@@ -64,15 +64,9 @@ boost::optional<Object> serializer_t::deserialize(const std::string& serialized)
     }
 }
 
-
-optional_commit serializer_t::deserialize_commit(const std::string& serialized) {
-    return deserialize<commit_t>(serialized);
-}
-
-optional_blob serializer_t::deserialize_blob(const std::string& serialized) {
-    return deserialize<blob_t>(serialized);
-}
-
+// Instantiations of deserialize.
+template boost::optional<blob_t> serializer_t::deserialize<blob_t>(const std::string&);
+template boost::optional<commit_t> serializer_t::deserialize<commit_t>(const std::string&);
 
 }
 

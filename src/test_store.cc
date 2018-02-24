@@ -50,7 +50,8 @@ TEST(inmemory_object_store_load, blob_returns_stored) {
 
 struct failing_deserializtion {
     static std::string serialize(const object_t&) {return "";}
-    static boost::optional<commit_t> deserialize_commit(const std::string&) {
+    template <class Object>
+    static boost::optional<Object> deserialize(const std::string&) {
         return boost::none;
     }
 };
