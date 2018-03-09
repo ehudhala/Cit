@@ -1,9 +1,11 @@
 CXX = g++-7 -Wall -pedantic -std=c++17
 
+BUILDDIR = build
+
 SRC    = $(wildcard *.cc)
-HEAD   = $(SRC:.cc=.h)
-OBJ    = $(SRC:.cc=.o)
-NO_TEST_OBJ = $(patsubst test_%,%,$(OBJ))
+OBJ    = $(patsubst %.cc,$(BUILDDIR)/%.o,$(SRC))
+
+GTEST_LINK = -lgtest -lgtest_main -lpthread -lboost_serialization
 
 .PHONY: all
 .PHONY: test
@@ -11,19 +13,22 @@ NO_TEST_OBJ = $(patsubst test_%,%,$(OBJ))
 
 all: test
 
-%.o: %.cc
-	$(CXX) -c -MMD $<
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
 
-driver: $(NO_TEST_OBJ)
-	$(CXX) $^ -o driver
+$(OBJ): | $(BUILDDIR)
 
-main: $(OBJ)
-	$(CXX) $^ -lgtest -lgtest_main -lpthread -lboost_serialization -o main
+$(BUILDDIR)/%.o : %.cc
+	$(CXX) -MMD $< -c -o $@
 
-test: main
-	./main
+$(BUILDDIR)/test_main: $(OBJ) | $(BUILDDIR)
+	$(CXX) $^ $(GTEST_LINK) -o $@
+
+test: $(BUILDDIR)/test_main
+	$(BUILDDIR)/test_main
 
 clean:
-	rm -f *.o *.d main
+	rm -f $(BUILDDIR)/*.o $(BUILDDIR)/*.d $(BUILDDIR)/test_main
+	rmdir $(BUILDDIR)
 
--include *.d
+-include build/*.d
