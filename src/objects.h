@@ -1,6 +1,5 @@
-#pragma once
-#ifndef _OBJECTSH
-#define _OBJECTSH
+#ifndef _CIT_OBJECTS_H_
+#define _CIT_OBJECTS_H_
 
 #include <string>
 

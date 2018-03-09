@@ -1,6 +1,5 @@
-#pragma once
-#ifndef _STOREH
-#define _STOREH
+#ifndef _CIT_STORE_H_
+#define _CIT_STORE_H_
 
 #include <map>
 #include <memory>

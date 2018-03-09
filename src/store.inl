@@ -1,3 +1,6 @@
+#ifndef _CIT_STORE_INL_
+#define _CIT_STORE_INL_
+
 #include "store.h"
 
 #include "utils.h"
@@ -51,3 +54,5 @@ typename store_t<index_t>::object_store& store_t<index_t>::get_objects() {
 }
 
 }
+
+#endif

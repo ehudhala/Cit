@@ -1,6 +1,5 @@
-#pragma once
-#ifndef _WORKINGTREEH
-#define _WORKINGTREEH
+#ifndef _CIT_WORKINGTREE_H_
+#define _CIT_WORKINGTREE_H_
 
 #include <string>
 #include <vector>

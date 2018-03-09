@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _CIT_UTILS_H_
+#define _CIT_UTILS_H_
 
 #include <map>
 
@@ -13,3 +14,5 @@ boost::optional<Return> optional_read(const std::map<Key, Val>& map, const Key& 
     }
     return boost::none;
 }
+
+#endif

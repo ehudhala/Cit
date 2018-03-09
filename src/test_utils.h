@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _CIT_TEST_UTILS_H_
+#define _CIT_TEST_UTILS_H_
 
 #include "objects.h"
 #include "store.h"
@@ -48,3 +49,5 @@ store inc_store();
  * Creates a new repo.
  */
 repo inc_repo(working_tree_t);
+
+#endif

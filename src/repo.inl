@@ -1,3 +1,6 @@
+#ifndef _CIT_REPO_INL_
+#define _CIT_REPO_INL_
+
 #include "repo.h"
 
 namespace cit {
@@ -13,3 +16,5 @@ optional_hash repo_t<store_t, working_tree_t>::add(const name_t& name) {
 }
 
 }
+
+#endif

@@ -1,6 +1,5 @@
-#pragma once
-#ifndef _REPOH
-#define _REPOH
+#ifndef _CIT_REPO_H_
+#define _CIT_REPO_H_
 
 #include "boost/optional.hpp"
 
@@ -11,7 +10,6 @@
 namespace cit {
     
 // Add, Commit, Checkout, Status.
-// We need WorkingTree.
 template <class store_t, class working_tree_t>
 class repo_t {
 public:
