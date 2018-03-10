@@ -33,7 +33,8 @@ struct object_equals {
 
     bool operator()(const cit::commit_t& commit, const cit::commit_t& other) const {
         return commit.description == other.description
-            && commit.parent_hash == other.parent_hash;
+            && commit.parent_hash == other.parent_hash
+            && commit.tree == other.tree;
     }
 
     bool operator()(const cit::tree_t& tree, const cit::tree_t& other) const {
@@ -71,6 +72,7 @@ void serialize(Archive& ar, cit::commit_t& commit, const unsigned int)
 {
     ar & commit.description;
     ar & commit.parent_hash;
+    ar & commit.tree;
 }
 
 template<typename Archive>
