@@ -61,10 +61,10 @@ struct blob_t {
  */
 struct commit_t {
     commit_t(); // Special case for serializer. TODO: delete.
-    commit_t(std::string description, hash_t tree_hash);
-    commit_t(std::string description, hash_t parent_hash, hash_t tree_hash);
+    commit_t(std::string message, hash_t tree_hash);
+    commit_t(std::string message, hash_t parent_hash, hash_t tree_hash);
 
-    std::string description;
+    std::string message;
     /**
      * The root commit doesn't have a parent hash.
      */

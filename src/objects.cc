@@ -14,11 +14,11 @@ namespace cit {
 commit_t::commit_t()
     : commit_t("", 0) {}
 
-commit_t::commit_t(std::string description, hash_t tree_hash)
-    : description{description}, parent_hash{boost::none}, tree_hash{tree_hash} {}
+commit_t::commit_t(std::string message, hash_t tree_hash)
+    : message{message}, parent_hash{boost::none}, tree_hash{tree_hash} {}
 
-commit_t::commit_t(std::string description, hash_t parent_hash, hash_t tree_hash)
-    : description{description}, parent_hash{parent_hash}, tree_hash{tree_hash} {}
+commit_t::commit_t(std::string message, hash_t parent_hash, hash_t tree_hash)
+    : message{message}, parent_hash{parent_hash}, tree_hash{tree_hash} {}
 
 struct object_equals {
     bool operator()(const cit::blob_t& blob, const cit::blob_t& other) const {
@@ -26,7 +26,7 @@ struct object_equals {
     }
 
     bool operator()(const cit::commit_t& commit, const cit::commit_t& other) const {
-        return commit.description == other.description
+        return commit.message == other.message
             && commit.parent_hash == other.parent_hash
             && commit.tree_hash == other.tree_hash;
     }
@@ -64,7 +64,7 @@ void serialize(Archive& ar, cit::blob_t& blob, const unsigned int)
 template<typename Archive>
 void serialize(Archive& ar, cit::commit_t& commit, const unsigned int)
 {
-    ar & commit.description;
+    ar & commit.message;
     ar & commit.parent_hash;
     ar & commit.tree_hash;
 }

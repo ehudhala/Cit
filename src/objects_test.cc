@@ -15,7 +15,7 @@ TEST(serializer, blob_deserialized_equal_to_serialized) {
 }
 
 TEST(serializer, commit_no_parent_deserialized_equal_to_serialized) {
-    commit_t commit{"description", 123};
+    commit_t commit{"message", 123};
     auto serialized{serializer::serialize(commit)};
     auto deserialized{serializer::deserialize<commit_t>(serialized)};
     ASSERT_TRUE(bool(deserialized));
@@ -23,7 +23,7 @@ TEST(serializer, commit_no_parent_deserialized_equal_to_serialized) {
 }
 
 TEST(serializer, full_commit_deserialized_equal_to_seialized) {
-    commit_t commit{"description", 123, 456};
+    commit_t commit{"message", 123, 456};
     auto serialized{serializer::serialize(commit)};
     auto deserialized{serializer::deserialize<commit_t>(serialized)};
     ASSERT_TRUE(bool(deserialized));
