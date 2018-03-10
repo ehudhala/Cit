@@ -47,4 +47,9 @@ store inc_store();
  */
 repo inc_repo(working_tree_t);
 
+/**
+ * Creates a new repo and adds all files in working tree.
+ */
+repo added_inc_repo(working_tree_t);
+
 #endif

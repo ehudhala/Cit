@@ -15,6 +15,14 @@ optional_hash repo_t<Store, WorkingTree>::add(const name_t& name) {
     return store.index.add(name, blob);
 }
 
+template <typename Store, typename WorkingTree>
+optional_hash repo_t<Store, WorkingTree>::commit(const std::string& message) {
+    tree_t tree{store.index.files};
+    hash_t tree_hash = store.get_objects().store(tree);
+    commit_t commit{message, tree_hash};
+    return store.get_objects().store(commit);
+}
+
 }
 
 #endif

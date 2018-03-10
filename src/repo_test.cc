@@ -24,3 +24,41 @@ TEST(repo_add, adds_blob_to_store) {
     ASSERT_TRUE(bool(hash));
     EXPECT_TRUE(blob_t{"content"} == *(r.store.get_objects().load<blob_t>(*hash)));
 }
+
+TEST(repo_commit, stores_tree) {
+    auto r{added_inc_repo(working_tree_t{{{"name", "content"}}})};
+    r.commit("message");
+    auto loaded_tree = r.store.get_objects().load<tree_t>(1); // incrementing hash :)
+    ASSERT_TRUE(bool(loaded_tree));
+    tree_t expected{{{"name", 0}}};
+    ASSERT_EQ(expected, *loaded_tree);
+
+}
+
+TEST(repo_commit, stores_commit) {
+    auto r{added_inc_repo(working_tree_t{{{"name", "content"}}})};
+    auto commit_hash = r.commit("message");
+    ASSERT_TRUE(bool(commit_hash));
+    auto loaded_commit = r.store.get_objects().load<commit_t>(*commit_hash);
+    ASSERT_TRUE(bool(loaded_commit));
+    commit_t expected{"message", 1}; // incrementing hash :)
+    ASSERT_EQ(expected, *loaded_commit);
+}
+
+TEST(repo_commit, creates_first_commit_with_no_parent_hash) {
+}
+
+TEST(repo_commit, creates_commit_with_correct_parent_hash) {
+}
+
+TEST(repo_commit, returns_commit_hash) {
+}
+
+TEST(repo_commit, updates_head_to_new_commit) {
+}
+
+TEST(repo_commit, updates_refs_to_new_commit) {
+}
+
+TEST(repo_commit, returns_none_when_there_are_no_changes) {
+}

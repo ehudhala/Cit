@@ -31,3 +31,11 @@ repo inc_repo(working_tree_t tree) {
     return repo{inc_store(), tree};
 }
 
+repo added_inc_repo(working_tree_t tree) {
+    auto r = inc_repo(tree);
+    for (auto file_name : tree.list()) {
+        r.add(file_name);
+    }
+    return r;
+}
+
