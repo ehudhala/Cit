@@ -35,7 +35,14 @@ TEST(repo_commit, stores_tree) {
 
 }
 
-TEST(repo_commit, stores_commit) {
+TEST(repo_commit, returns_commit_hash) {
+    auto r{inc_repo(working_tree_t{{}})};
+    auto commit_hash = r.commit("message");
+    ASSERT_TRUE(bool(commit_hash));
+    ASSERT_EQ(1, *commit_hash); // incrementing hash.
+}
+
+TEST(repo_commit, stores_commit_with_no_parent_hash) {
     auto r{added_inc_repo(working_tree_t{{{"name", "content"}}})};
     auto commit_hash = r.commit("message");
     ASSERT_TRUE(bool(commit_hash));
@@ -45,13 +52,7 @@ TEST(repo_commit, stores_commit) {
     ASSERT_EQ(expected, *loaded_commit);
 }
 
-TEST(repo_commit, creates_first_commit_with_no_parent_hash) {
-}
-
 TEST(repo_commit, creates_commit_with_correct_parent_hash) {
-}
-
-TEST(repo_commit, returns_commit_hash) {
 }
 
 TEST(repo_commit, updates_head_to_new_commit) {
