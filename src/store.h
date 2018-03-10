@@ -16,8 +16,8 @@ namespace cit {
 namespace inmemory {
 
 using hash_func_t = std::function<hash_t(const std::string&)>;
-template <class object>
-using deserialize_func = std::function<boost::optional<object>(const std::string&)>;
+template <typename Object>
+using deserialize_func = std::function<boost::optional<Object>(const std::string&)>;
 
 /**
  * The heavy storage of Cit.
@@ -26,7 +26,7 @@ using deserialize_func = std::function<boost::optional<object>(const std::string
  * We have many loads in order to load back the type stored.
  * This object store stores all the objects in memory.
  */
-template <class serializer_t>
+template <typename Serializer>
 class object_store_t {
 public:
     /**
@@ -78,14 +78,15 @@ using blob_names_t = std::map<std::string, hash_t>;
  * Contains the currently staged files.
  * Adding a file to the index stores the blob, and saves its new state.
  */
-template <class object_store_t>
+template <typename ObjectStore>
 class index_t {
 public:
-    using object_store = object_store_t;
+    // TODO: rename object_store according to conventions.
+    using object_store = ObjectStore;
     /**
      * The index is injected with the object_store it should store objects to.
      */
-    index_t(object_store_t objects) : objects(objects) {}
+    index_t(ObjectStore objects) : objects(objects) {}
 
     /**
      * Adds a file to the index.
@@ -99,21 +100,19 @@ public:
      */
     blob_names_t blob_names;
 
-    object_store_t objects;
+    ObjectStore objects;
 };
 
 }
 
-template <class index_t>
+template <typename Index>
 struct store_t {
-    using object_store = typename index_t::object_store;
-    store_t(index_t index)
-        : index(index) {}
+    using object_store = typename Index::object_store;
+    store_t(Index index) : index(index) {}
 
     object_store& get_objects();
 
-    index_t index;
-    // TODO: ref_store.
+    Index index;
 };
 
 }

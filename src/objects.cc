@@ -11,13 +11,13 @@
 namespace boost {
 namespace serialization {
 
-template<class Archive>
+template<typename Archive>
 void serialize(Archive& ar, cit::blob_t& blob, const unsigned int)
 {
     ar & blob.content;
 }
 
-template<class Archive>
+template<typename Archive>
 void serialize(Archive& ar, cit::commit_t& commit, const unsigned int)
 {
     ar & commit.description;
@@ -39,7 +39,7 @@ commit_t::commit_t(std::string description, hash_t parent_hash)
     : description{description}, parent_hash{parent_hash} {}
 
 struct serialize_visitor {
-    template <class Object>
+    template <typename Object>
     std::string operator()(const Object& object) const {
         std::ostringstream os;
         boost::archive::text_oarchive oa(os);
@@ -52,7 +52,7 @@ std::string serializer_t::serialize(const object_t& object) {
     return boost::apply_visitor(serialize_visitor{}, object);
 }
 
-template <class Object>
+template <typename Object>
 boost::optional<Object> serializer_t::deserialize(const std::string& serialized) {
     try {
         std::istringstream is(serialized);

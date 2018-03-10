@@ -77,7 +77,7 @@ struct serializer_t {
      * Returns an Optional which will contain the object on success
      * or be empty on failure to deserialize.
      */
-    template <class Object>
+    template <typename Object>
     static boost::optional<Object> deserialize(const std::string& serialized);
 };
 

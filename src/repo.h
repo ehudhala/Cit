@@ -10,10 +10,10 @@
 namespace cit {
     
 // Add, Commit, Checkout, Status.
-template <class store_t, class working_tree_t>
+template <typename Store, typename WorkingTree>
 class repo_t {
 public:
-    repo_t(store_t store, working_tree_t working_tree)
+    repo_t(Store store, WorkingTree working_tree)
         : store(store), working_tree(working_tree) {}
 
     /**
@@ -23,8 +23,8 @@ public:
     optional_hash add(const name_t&);
 
 // private:
-    store_t store;
-    working_tree_t working_tree;
+    Store store;
+    WorkingTree working_tree;
 };
 
 }
