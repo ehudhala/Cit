@@ -1,27 +1,17 @@
+#include <algorithm>
+
 #include "test_utils.h"
 
 using namespace cit;
 
-struct object_equals {
-    bool operator()(const cit::blob_t& blob, const cit::blob_t& other) const {
-        return blob.content == other.content;
+boost::optional<file_t> find_file(const std::vector<file_t>& files, const name_t& name) {
+    auto res = std::find_if(files.begin(), files.end(),
+            [&name](const file_t& file) {return file.name == name;});
+    if (res == files.end()) {
+        return boost::none;
     }
-
-    bool operator()(const cit::commit_t& commit, const cit::commit_t& other) const {
-        return commit.description == other.description
-            && commit.parent_hash == other.parent_hash;
-    }
-
-    template <class Object, class Other>
-    bool operator()(const Object&, const Other&) const {
-        return false;
-    }
-};
-
-bool operator==(const cit::object_t& obj, const cit::object_t& other) {
-    return boost::apply_visitor(object_equals{}, obj, other);
+    return *res;
 }
-
 
 object_store_t inc_object_store() {
     return inmemory::object_store_t<serializer>(incrementing_hash_func{});
@@ -39,5 +29,13 @@ store inc_store() {
 
 repo inc_repo(working_tree_t tree) {
     return repo{inc_store(), tree};
+}
+
+repo added_inc_repo(working_tree_t tree) {
+    auto r = inc_repo(tree);
+    for (auto file_name : tree.list()) {
+        r.add(file_name);
+    }
+    return r;
 }
 

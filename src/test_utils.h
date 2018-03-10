@@ -14,10 +14,7 @@ using store = store_t<index_t>;
 using repo = repo_t<store, inmemory::working_tree_t>;
 using working_tree_t = inmemory::working_tree_t;
 
-/**
- * Used for tests, equals means their serialization is equal.
- */
-bool operator==(const cit::object_t& obj, const cit::object_t& other);
+boost::optional<file_t> find_file(const std::vector<file_t>&, const name_t&);
 
 struct incrementing_hash_func {
     /**
@@ -49,5 +46,10 @@ store inc_store();
  * Creates a new repo.
  */
 repo inc_repo(working_tree_t);
+
+/**
+ * Creates a new repo and adds all files in working tree.
+ */
+repo added_inc_repo(working_tree_t);
 
 #endif

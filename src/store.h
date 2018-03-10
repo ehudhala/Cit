@@ -71,8 +71,6 @@ private:
     std::map<hash_t, std::string> objects_map;
 };
 
-using blob_names_t = std::map<std::string, hash_t>;
-
 /**
  * Used as the index for Cit.
  * Contains the currently staged files.
@@ -98,7 +96,7 @@ public:
      * The index contents.
      * Contains all the current files in the index.
      */
-    blob_names_t blob_names;
+    std::vector<file_t> files;
 
     ObjectStore objects;
 };
@@ -111,8 +109,9 @@ struct store_t {
     store_t(Index index) : index(index) {}
 
     object_store& get_objects();
-
     Index index;
+    optional_hash head; // false before the first commit.
+    // TODO: dummy first commit instead?
 };
 
 }

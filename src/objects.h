@@ -2,9 +2,12 @@
 #define _CIT_OBJECTS_H_
 
 #include <string>
+#include <vector>
 
 #include "boost/variant.hpp"
 #include "boost/optional.hpp"
+
+#include "working_tree.h"
 
 namespace cit {
 
@@ -30,6 +33,21 @@ using optional_hash = boost::optional<hash_t>;
  */
 
 /**
+ * Holds information of a stored file - name and hash.
+ */
+struct file_t {
+    name_t name;
+    hash_t hash;
+};
+
+/**
+ * Represents a tree - the working status of the whole file system.
+ */
+struct tree_t {
+    std::vector<file_t> files;
+};
+
+/**
  * Represents a blob - which is a file.
  */
 struct blob_t {
@@ -42,22 +60,29 @@ struct blob_t {
  * Points to the last commit in order to create a tree.
  */
 struct commit_t {
-    commit_t();
-    commit_t(std::string description);
-    commit_t(std::string description, hash_t parent_hash);
+    commit_t(); // Special case for serializer. TODO: delete.
+    commit_t(std::string message, hash_t tree_hash);
+    commit_t(std::string message, optional_hash parent_hash, hash_t tree_hash);
 
-    std::string description;
+    std::string message;
     /**
      * The root commit doesn't have a parent hash.
      */
     optional_hash parent_hash;
+    hash_t tree_hash;
 };
+
 
 /**
  * We treat all objects the same in Cit.
  * They can all be serialized and saved.
  */
-using object_t = boost::variant<blob_t, commit_t>;
+using object_t = boost::variant<blob_t, commit_t, tree_t>;
+
+/**
+ * Used for tests, equals means their serialization is equal.
+ */
+bool operator==(const cit::object_t& obj, const cit::object_t& other);
 
 using optional_blob = boost::optional<blob_t>;
 using optional_commit = boost::optional<commit_t>;
