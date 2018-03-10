@@ -60,18 +60,16 @@ struct blob_t {
  * Points to the last commit in order to create a tree.
  */
 struct commit_t {
-    commit_t();
-    commit_t(std::string description);
-    commit_t(std::string description, hash_t parent_hash);
-    commit_t(std::string description, tree_t tree);
-    commit_t(std::string description, hash_t parent_hash, tree_t tree);
+    commit_t(); // Special case for serializer. TODO: delete.
+    commit_t(std::string description, hash_t tree_hash);
+    commit_t(std::string description, hash_t parent_hash, hash_t tree_hash);
 
     std::string description;
     /**
      * The root commit doesn't have a parent hash.
      */
     optional_hash parent_hash;
-    tree_t tree;
+    hash_t tree_hash;
 };
 
 

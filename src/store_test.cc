@@ -9,8 +9,8 @@ using namespace cit;
 
 TEST(inmemory_object_store_store, returns_hash) {
     auto objects(inc_object_store());
-    EXPECT_EQ(0, objects.store(commit_t{"a3"}));
-    EXPECT_EQ(1, objects.store(commit_t{"a4"}));
+    EXPECT_EQ(0, objects.store(blob_t{"a3"}));
+    EXPECT_EQ(1, objects.store(blob_t{"a4"}));
 }
 
 TEST(inmemory_object_store_load, unexisting_hash) {
@@ -21,16 +21,16 @@ TEST(inmemory_object_store_load, unexisting_hash) {
 
 TEST(inmemory_object_store_load, returns_stored_string) {
     auto objects(inc_object_store());
-    commit_t commit{"a5"};
-    cit::hash_t hash = objects.store(commit);
+    blob_t blob{"a5"};
+    cit::hash_t hash = objects.store(blob);
     auto loaded(objects.raw_load(hash));
     ASSERT_TRUE(bool(loaded));
-    EXPECT_EQ(serializer::serialize(commit), *loaded);
+    EXPECT_EQ(serializer::serialize(blob), *loaded);
 }
 
 TEST(inmemory_object_store_load, commit_returns_stored) {
     auto objects(inc_object_store());
-    commit_t commit{"a6"};
+    commit_t commit{"a6", 123};
     cit::hash_t hash = objects.store(commit);
     auto loaded_commit(objects.load<commit_t>(hash));
     ASSERT_TRUE(bool(loaded_commit));
@@ -56,10 +56,10 @@ struct failing_deserializtion {
 
 TEST(inmemory_object_store_load, deserializtion_fails) {
     inmemory::object_store_t<failing_deserializtion> objects(incrementing_hash_func{});
-    commit_t commit{"a8"};
-    cit::hash_t hash = objects.store(commit);
+    blob_t blob{"a8"};
+    cit::hash_t hash = objects.store(blob);
     EXPECT_TRUE(bool(objects.raw_load(hash)));
-    EXPECT_FALSE(bool(objects.load<commit_t>(hash)));
+    EXPECT_FALSE(bool(objects.load<blob_t>(hash)));
 }
 
 TEST(index_add, returns_hash) {
