@@ -14,11 +14,6 @@ using store = store_t<index_t>;
 using repo = repo_t<store, inmemory::working_tree_t>;
 using working_tree_t = inmemory::working_tree_t;
 
-/**
- * Used for tests, equals means their serialization is equal.
- */
-bool operator==(const cit::object_t& obj, const cit::object_t& other);
-
 struct incrementing_hash_func {
     /**
      * This obviously isn't a real hash function,

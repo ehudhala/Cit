@@ -72,6 +72,11 @@ struct tree_t {
  */
 using object_t = boost::variant<blob_t, commit_t, tree_t>;
 
+/**
+ * Used for tests, equals means their serialization is equal.
+ */
+bool operator==(const cit::object_t& obj, const cit::object_t& other);
+
 using optional_blob = boost::optional<blob_t>;
 using optional_commit = boost::optional<commit_t>;
 
