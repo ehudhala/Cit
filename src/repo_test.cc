@@ -31,7 +31,7 @@ TEST(repo_commit, stores_tree) {
     auto loaded_tree = r.store.get_objects().load<tree_t>(1); // incrementing hash :)
     ASSERT_TRUE(bool(loaded_tree));
     tree_t expected{{{"name", 0}}};
-    ASSERT_EQ(expected, *loaded_tree);
+    EXPECT_EQ(expected, *loaded_tree);
 
 }
 
@@ -39,7 +39,7 @@ TEST(repo_commit, returns_commit_hash) {
     auto r{inc_repo(working_tree_t{{}})};
     auto commit_hash = r.commit("message");
     ASSERT_TRUE(bool(commit_hash));
-    ASSERT_EQ(1, *commit_hash); // incrementing hash.
+    EXPECT_EQ(1, *commit_hash); // incrementing hash.
 }
 
 TEST(repo_commit, stores_commit_with_no_parent_hash) {
@@ -49,7 +49,7 @@ TEST(repo_commit, stores_commit_with_no_parent_hash) {
     auto loaded_commit = r.store.get_objects().load<commit_t>(*commit_hash);
     ASSERT_TRUE(bool(loaded_commit));
     commit_t expected{"message", 1}; // incrementing hash :)
-    ASSERT_EQ(expected, *loaded_commit);
+    EXPECT_EQ(expected, *loaded_commit);
 }
 
 TEST(repo_commit, creates_commit_with_correct_parent_hash) {
@@ -59,7 +59,4 @@ TEST(repo_commit, updates_head_to_new_commit) {
 }
 
 TEST(repo_commit, updates_refs_to_new_commit) {
-}
-
-TEST(repo_commit, returns_none_when_there_are_no_changes) {
 }
