@@ -12,13 +12,19 @@
 namespace cit {
 
 commit_t::commit_t()
-    : description{""}, parent_hash{boost::none} {}
+    : commit_t("", tree_t{}) {}
 
 commit_t::commit_t(std::string description)
-    : description{description}, parent_hash{boost::none} {}
+    : commit_t(description, tree_t{}) {}
 
 commit_t::commit_t(std::string description, hash_t parent_hash)
-    : description{description}, parent_hash{parent_hash} {}
+    : commit_t(description, parent_hash, tree_t{}) {}
+
+commit_t::commit_t(std::string description, tree_t tree)
+    : description{description}, parent_hash{boost::none}, tree{tree} {}
+
+commit_t::commit_t(std::string description, hash_t parent_hash, tree_t tree)
+    : description{description}, parent_hash{parent_hash}, tree{tree} {}
 
 struct object_equals {
     bool operator()(const cit::blob_t& blob, const cit::blob_t& other) const {

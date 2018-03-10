@@ -33,6 +33,21 @@ using optional_hash = boost::optional<hash_t>;
  */
 
 /**
+ * Holds information of a stored file - name and hash.
+ */
+struct file_t {
+    name_t name;
+    hash_t hash;
+};
+
+/**
+ * Represents a tree - the working status of the whole file system.
+ */
+struct tree_t {
+    std::vector<file_t> files;
+};
+
+/**
  * Represents a blob - which is a file.
  */
 struct blob_t {
@@ -48,23 +63,17 @@ struct commit_t {
     commit_t();
     commit_t(std::string description);
     commit_t(std::string description, hash_t parent_hash);
+    commit_t(std::string description, tree_t tree);
+    commit_t(std::string description, hash_t parent_hash, tree_t tree);
 
     std::string description;
     /**
      * The root commit doesn't have a parent hash.
      */
     optional_hash parent_hash;
+    tree_t tree;
 };
 
-
-struct file_t {
-    name_t name;
-    hash_t hash;
-};
-
-struct tree_t {
-    std::vector<file_t> files;
-};
 
 /**
  * We treat all objects the same in Cit.
