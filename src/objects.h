@@ -66,7 +66,8 @@ using optional_commit = boost::optional<commit_t>;
  * Used to serialize and deserialize objects.
  * This implementation is simple, could be json / boost::serialize.
  */
-struct serializer {
+class serializer {
+public:
     /**
      * Serializes an object.
      */
