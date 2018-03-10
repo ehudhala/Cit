@@ -38,25 +38,34 @@ TEST(repo_commit, stores_tree) {
 TEST(repo_commit, returns_commit_hash) {
     auto r{inc_repo(working_tree_t{{}})};
     auto commit_hash = r.commit("message");
-    ASSERT_TRUE(bool(commit_hash));
-    EXPECT_EQ(1, *commit_hash); // incrementing hash.
+    EXPECT_EQ(1, commit_hash); // incrementing hash.
 }
 
 TEST(repo_commit, stores_commit_with_no_parent_hash) {
     auto r{added_inc_repo(working_tree_t{{{"name", "content"}}})};
     auto commit_hash = r.commit("message");
-    ASSERT_TRUE(bool(commit_hash));
-    auto loaded_commit = r.store.get_objects().load<commit_t>(*commit_hash);
+    auto loaded_commit = r.store.get_objects().load<commit_t>(commit_hash);
     ASSERT_TRUE(bool(loaded_commit));
     commit_t expected{"message", 1}; // incrementing hash :)
     EXPECT_EQ(expected, *loaded_commit);
 }
 
 TEST(repo_commit, creates_commit_with_correct_parent_hash) {
+    auto r{inc_repo(working_tree_t{{}})};
+    r.store.head = 123;
+    auto commit_hash = r.commit("message");
+    auto loaded_commit = r.store.get_objects().load<commit_t>(commit_hash);
+    ASSERT_TRUE(bool(loaded_commit));
+    commit_t expected("message", 123, 0);
+    EXPECT_EQ(expected, *loaded_commit);
 }
 
 TEST(repo_commit, updates_head_to_new_commit) {
+    auto r{inc_repo(working_tree_t{{}})};
+    auto commit_hash = r.commit("message");
+    EXPECT_EQ(commit_hash, r.store.head);
 }
 
 TEST(repo_commit, updates_refs_to_new_commit) {
+    // TODO: implement when we support refs.
 }

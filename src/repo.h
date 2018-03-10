@@ -26,7 +26,7 @@ public:
      * Commits the current index.
      * Creates a commit object, and updates the current ref.
      */
-    optional_hash commit(const std::string& message);
+    hash_t commit(const std::string& message);
 
 // private:
     Store store;

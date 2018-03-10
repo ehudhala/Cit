@@ -109,8 +109,9 @@ struct store_t {
     store_t(Index index) : index(index) {}
 
     object_store& get_objects();
-
     Index index;
+    optional_hash head; // false before the first commit.
+    // TODO: dummy first commit instead?
 };
 
 }

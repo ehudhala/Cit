@@ -17,7 +17,7 @@ commit_t::commit_t()
 commit_t::commit_t(std::string message, hash_t tree_hash)
     : message{message}, parent_hash{boost::none}, tree_hash{tree_hash} {}
 
-commit_t::commit_t(std::string message, hash_t parent_hash, hash_t tree_hash)
+commit_t::commit_t(std::string message, optional_hash parent_hash, hash_t tree_hash)
     : message{message}, parent_hash{parent_hash}, tree_hash{tree_hash} {}
 
 struct object_equals {
