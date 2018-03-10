@@ -2,9 +2,12 @@
 #define _CIT_OBJECTS_H_
 
 #include <string>
+#include <vector>
 
 #include "boost/variant.hpp"
 #include "boost/optional.hpp"
+
+#include "working_tree.h"
 
 namespace cit {
 
@@ -53,11 +56,21 @@ struct commit_t {
     optional_hash parent_hash;
 };
 
+
+struct tree_entry {
+    name_t name;
+    hash_t hash;
+};
+
+struct tree_t {
+    std::vector<tree_entry> files;
+};
+
 /**
  * We treat all objects the same in Cit.
  * They can all be serialized and saved.
  */
-using object_t = boost::variant<blob_t, commit_t>;
+using object_t = boost::variant<blob_t, commit_t, tree_t>;
 
 using optional_blob = boost::optional<blob_t>;
 using optional_commit = boost::optional<commit_t>;

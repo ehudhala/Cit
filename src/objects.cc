@@ -4,6 +4,7 @@
 #include "boost/archive/text_iarchive.hpp"
 #include "boost/archive/archive_exception.hpp"
 #include "boost/serialization/optional.hpp"
+#include "boost/serialization/vector.hpp"
 
 #include "objects.h"
 
@@ -22,6 +23,19 @@ void serialize(Archive& ar, cit::commit_t& commit, const unsigned int)
 {
     ar & commit.description;
     ar & commit.parent_hash;
+}
+
+template<typename Archive>
+void serialize(Archive& ar, cit::tree_entry& entry, const unsigned int)
+{
+    ar & entry.name;
+    ar & entry.hash;
+}
+
+template<typename Archive>
+void serialize(Archive& ar, cit::tree_t& tree, const unsigned int)
+{
+    ar & tree.files;
 }
 
 }
@@ -69,6 +83,7 @@ boost::optional<Object> serializer::deserialize(const std::string& serialized) {
 // Instantiations of deserialize.
 template boost::optional<blob_t> serializer::deserialize<blob_t>(const std::string&);
 template boost::optional<commit_t> serializer::deserialize<commit_t>(const std::string&);
+template boost::optional<tree_t> serializer::deserialize<tree_t>(const std::string&);
 
 }
 

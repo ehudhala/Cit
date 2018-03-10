@@ -12,6 +12,15 @@ struct object_equals {
             && commit.parent_hash == other.parent_hash;
     }
 
+    bool operator()(const cit::tree_t& tree, const cit::tree_t& other) const {
+        auto match = std::mismatch(tree.files.begin(), tree.files.end(),
+                other.files.begin(), other.files.end(),
+                [](const auto& lhs, const auto& rhs) {
+                    return lhs.name == rhs.name && lhs.hash == rhs.hash;
+                });
+        return match.first == tree.files.end() && match.second == other.files.end();
+    }
+
     template <class Object, class Other>
     bool operator()(const Object&, const Other&) const {
         return false;

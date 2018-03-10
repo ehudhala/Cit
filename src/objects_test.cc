@@ -34,3 +34,11 @@ TEST(serializer, deserialize_error_handling) {
     auto deserialized{serializer::deserialize<blob_t>("asdf")};
     ASSERT_FALSE(bool(deserialized));
 }
+
+TEST(serializer, tree_deserialized_equal_to_serialized) {
+    tree_t tree{{{"file1", 123}, {"file2", 234}}};
+    auto serialized{serializer::serialize(tree)};
+    auto deserialized{serializer::deserialize<tree_t>(serialized)};
+    ASSERT_TRUE(bool(deserialized));
+    EXPECT_TRUE(tree == *deserialized);
+}
