@@ -24,7 +24,7 @@ bool operator==(const cit::object_t& obj, const cit::object_t& other) {
 
 
 object_store_t inc_object_store() {
-    return inmemory::object_store_t<serializer_t>(incrementing_hash_func{});
+    return inmemory::object_store_t<serializer>(incrementing_hash_func{});
 }
 
 index_t inc_index() {

@@ -48,12 +48,12 @@ struct serialize_visitor {
     }
 };
 
-std::string serializer_t::serialize(const object_t& object) {
+std::string serializer::serialize(const object_t& object) {
     return boost::apply_visitor(serialize_visitor{}, object);
 }
 
 template <typename Object>
-boost::optional<Object> serializer_t::deserialize(const std::string& serialized) {
+boost::optional<Object> serializer::deserialize(const std::string& serialized) {
     try {
         std::istringstream is(serialized);
         boost::archive::text_iarchive ia(is);
@@ -67,8 +67,8 @@ boost::optional<Object> serializer_t::deserialize(const std::string& serialized)
 }
 
 // Instantiations of deserialize.
-template boost::optional<blob_t> serializer_t::deserialize<blob_t>(const std::string&);
-template boost::optional<commit_t> serializer_t::deserialize<commit_t>(const std::string&);
+template boost::optional<blob_t> serializer::deserialize<blob_t>(const std::string&);
+template boost::optional<commit_t> serializer::deserialize<commit_t>(const std::string&);
 
 }
 
