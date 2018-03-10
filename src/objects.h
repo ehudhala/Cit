@@ -57,13 +57,13 @@ struct commit_t {
 };
 
 
-struct tree_entry {
+struct file_t {
     name_t name;
     hash_t hash;
 };
 
 struct tree_t {
-    std::vector<tree_entry> files;
+    std::vector<file_t> files;
 };
 
 /**

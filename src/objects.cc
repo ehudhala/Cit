@@ -68,10 +68,10 @@ void serialize(Archive& ar, cit::commit_t& commit, const unsigned int)
 }
 
 template<typename Archive>
-void serialize(Archive& ar, cit::tree_entry& entry, const unsigned int)
+void serialize(Archive& ar, cit::file_t& file, const unsigned int)
 {
-    ar & entry.name;
-    ar & entry.hash;
+    ar & file.name;
+    ar & file.hash;
 }
 
 template<typename Archive>

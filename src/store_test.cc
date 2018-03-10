@@ -78,9 +78,12 @@ TEST(index_add, serializes_to_object_store) {
     EXPECT_TRUE(blob == *loaded);
 }
 
-TEST(index_add, adds_to_blob_names) {
+TEST(index_add, adds_to_files) {
     index_t index{inc_index()};
     blob_t blob{"asdf"};
     auto hash = index.add("file", blob);
-    EXPECT_EQ(hash, index.blob_names["file"]);
+    auto index_file = find_file(index.files, "file");
+    ASSERT_TRUE(bool(index_file));
+    file_t expected{"file", hash};
+    EXPECT_EQ(hash, index_file->hash);
 }

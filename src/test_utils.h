@@ -14,6 +14,8 @@ using store = store_t<index_t>;
 using repo = repo_t<store, inmemory::working_tree_t>;
 using working_tree_t = inmemory::working_tree_t;
 
+boost::optional<file_t> find_file(const std::vector<file_t>&, const name_t&);
+
 struct incrementing_hash_func {
     /**
      * This obviously isn't a real hash function,

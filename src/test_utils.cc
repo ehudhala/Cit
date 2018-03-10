@@ -1,6 +1,17 @@
+#include <algorithm>
+
 #include "test_utils.h"
 
 using namespace cit;
+
+boost::optional<file_t> find_file(const std::vector<file_t>& files, const name_t& name) {
+    auto res = std::find_if(files.begin(), files.end(),
+            [&name](const file_t& file) {return file.name == name;});
+    if (res == files.end()) {
+        return boost::none;
+    }
+    return *res;
+}
 
 object_store_t inc_object_store() {
     return inmemory::object_store_t<serializer>(incrementing_hash_func{});
