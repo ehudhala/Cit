@@ -16,3 +16,5 @@ add_executable(cit_tests
         $<TARGET_OBJECTS:repo_test>
         $<TARGET_OBJECTS:test_utils>)
 target_link_libraries(cit_tests -lgtest -lgtest_main -lpthread -lboost_serialization)
+
+gtest_discover_tests(cit_tests)

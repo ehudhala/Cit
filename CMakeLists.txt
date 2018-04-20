@@ -3,4 +3,7 @@ project(cit)
 
 set(CMAKE_CXX_STANDARD 14)
 
+include(GoogleTest)
+include(CTest)
+
 add_subdirectory(src)
