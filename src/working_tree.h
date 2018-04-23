@@ -35,6 +35,12 @@ public:
     boost::optional<const std::string&> read(const name_t&);
 
     /**
+     * Writes new content to the given file.
+     * Creates the file if it doesn't exist yet.
+     */
+    void write(const name_t&, std::string content);
+
+    /**
      * Checks whether the working tree contains the given name.
      */
     bool contains(const name_t&);
