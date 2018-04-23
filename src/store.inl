@@ -46,6 +46,11 @@ hash_t index_t<ObjectStore>::add(const name_t& name, const blob_t& blob) {
     return hash;
 }
 
+template <typename ObjectStore>
+void index_t<ObjectStore>::update(std::vector<file_t> new_files) {
+    files = std::move(new_files);
+}
+
 }
 
 template <typename Index>

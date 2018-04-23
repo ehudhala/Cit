@@ -93,6 +93,11 @@ public:
     hash_t add(const name_t&, const blob_t&);
 
     /**
+     * Updates the index to hold the given files and hashes.
+     */
+    void update(std::vector<file_t>);
+
+    /**
      * The index contents.
      * Contains all the current files in the index.
      */

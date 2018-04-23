@@ -87,3 +87,14 @@ TEST(index_add, adds_to_files) {
     file_t expected{"file", hash};
     EXPECT_EQ(hash, index_file->hash);
 }
+
+TEST(index_update, updates_the_index) {
+    index_t index{inc_index()};
+    blob_t first_blob{"content"};
+    index.add("name", first_blob);
+    file_t file{"updated", 123};
+    std::vector<file_t> files{file};
+    index.update(files);
+    EXPECT_EQ(file.name, index.files[0].name);
+    EXPECT_EQ(file.hash, index.files[0].hash);
+}
