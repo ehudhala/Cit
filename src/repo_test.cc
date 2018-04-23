@@ -69,3 +69,22 @@ TEST(repo_commit, updates_head_to_new_commit) {
 TEST(repo_commit, updates_refs_to_new_commit) {
     // TODO: implement when we support refs.
 }
+
+TEST(repo_checkout, returns_false_when_no_commit_found) {
+    auto r{inc_repo(working_tree_t{{}})};
+    EXPECT_FALSE(r.checkout(234));
+}
+
+TEST(repo_checkout, returns_false_when_hash_isnt_commit) {
+    auto r{inc_repo(working_tree_t{{{"name", "content"}}})};
+    auto hash = r.add("name");
+    EXPECT_FALSE(r.checkout(*hash));
+}
+
+TEST(load_tree, returns_commit_tree) {
+    auto r{inc_repo(working_tree_t{{}})};
+    auto commit_hash = r.commit("message");
+    auto tree = load_tree(r.store.get_objects(), commit_hash);
+    ASSERT_TRUE(bool(tree));
+    EXPECT_EQ(tree_t{}, *tree);
+}

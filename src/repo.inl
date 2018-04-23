@@ -25,6 +25,26 @@ hash_t repo_t<Store, WorkingTree>::commit(const std::string& message) {
     return commit_hash;
 }
 
+// TODO: checkout MUST be atommic, we don't want corruptions...
+// for the first phase it's not atomic though.
+template <typename Store, typename WorkingTree>
+bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
+    auto tree = load_tree(store.get_objects(), commit_hash);
+    if (!tree) {
+        return false;
+    }
+    return false;
+}
+
+template <typename ObjectStore>
+boost::optional<tree_t> load_tree(const ObjectStore& objects, hash_t commit_hash) {
+    auto commit = objects.template load<commit_t>(commit_hash);
+    if (!commit) {
+        return boost::none;
+    }
+    return objects.template load<tree_t>((*commit).tree_hash);
+}
+
 }
 
 #endif

@@ -28,10 +28,26 @@ public:
      */
     hash_t commit(const std::string& message);
 
+    /**
+     * Checkouts the repo to the given commit.
+     * Changes the working tree and the index, and updates head.
+     * Returns whether the checkout succeeded.
+     * Checkout may fail when:
+     *      The given hash is not a commit.
+     */
+    bool checkout(hash_t commit_hash);
+    // TODO: we should make a commit_hash_t for static checks.
+
 // private:
     Store store;
     WorkingTree working_tree;
 };
+
+/**
+ * Loads a commit and retrieves its tree.
+ */
+template <typename ObjectStore>
+boost::optional<tree_t> load_tree(const ObjectStore& objects, hash_t commit_hash);
 
 }
 
