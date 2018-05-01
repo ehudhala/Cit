@@ -85,7 +85,7 @@ TEST(index_add, adds_to_files) {
     auto index_file = find_file(index.files, "file");
     ASSERT_TRUE(bool(index_file));
     file_t expected{"file", hash};
-    EXPECT_EQ(hash, index_file->hash);
+    EXPECT_EQ(hash, index_file->blob_hash);
 }
 
 TEST(index_update, updates_the_index) {

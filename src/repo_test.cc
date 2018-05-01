@@ -15,7 +15,7 @@ TEST(repo_add, adds_blob_to_index) {
     ASSERT_TRUE(bool(hash));
     auto index_file = find_file(r.store.index.files, "name");
     ASSERT_TRUE(bool(index_file));
-    EXPECT_EQ(hash, index_file->hash);
+    EXPECT_EQ(hash, index_file->blob_hash);
 }
 
 TEST(repo_add, adds_blob_to_store) {

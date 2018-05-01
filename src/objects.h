@@ -37,7 +37,7 @@ using optional_hash = boost::optional<hash_t>;
  */
 struct file_t {
     name_t name;
-    hash_t hash;
+    hash_t blob_hash;
 };
 
 /**

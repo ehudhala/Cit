@@ -46,7 +46,7 @@ bool operator==(const cit::object_t& obj, const cit::object_t& other) {
 }
 
 bool operator==(const cit::file_t& file, const cit::file_t& other) {
-    return file.name == other.name && file.hash == other.hash;
+    return file.name == other.name && file.blob_hash == other.blob_hash;
 }
 
 }
@@ -72,7 +72,7 @@ template<typename Archive>
 void serialize(Archive& ar, cit::file_t& file, const unsigned int)
 {
     ar & file.name;
-    ar & file.hash;
+    ar & file.blob_hash;
 }
 
 template<typename Archive>
