@@ -94,3 +94,16 @@ TEST(repo_checkout, updates_index_files) {
     std::vector<file_t> expected_files{{name, *blob_hash}};
     EXPECT_EQ(expected_files, r.store.index.files);
 }
+
+TEST(repo_checkout, updates_working_tree) {
+    std::string content{"content"}, name{"name"};
+    auto r{inc_repo(working_tree_t{{{name, content}}})};
+    auto blob_hash = r.add(name);
+    auto commit_hash = r.commit("message");
+    r.working_tree.write(name, "new_content");
+    r.add(name);
+    r.commit("new_commit");
+    r.checkout(commit_hash);
+    auto working_tree_content = *r.working_tree.read(name);
+    EXPECT_EQ(content, working_tree_content);
+}
