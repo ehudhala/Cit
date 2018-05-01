@@ -62,6 +62,14 @@ TEST(inmemory_object_store_load, deserializtion_fails) {
     EXPECT_FALSE(bool(objects.load<blob_t>(hash)));
 }
 
+TEST(load_tree, returns_commit_tree) {
+    auto r{inc_repo(working_tree_t{{}})};
+    auto commit_hash = r.commit("message");
+    auto tree = load_tree(r.store.get_objects(), commit_hash);
+    ASSERT_TRUE(bool(tree));
+    EXPECT_EQ(tree_t{}, *tree);
+}
+
 TEST(index_add, returns_hash) {
     index_t index{inc_index()};
     blob_t blob{"asdf"};

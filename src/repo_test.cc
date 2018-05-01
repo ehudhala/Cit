@@ -81,14 +81,6 @@ TEST(repo_checkout, returns_false_when_hash_isnt_commit) {
     EXPECT_FALSE(r.checkout(*hash));
 }
 
-TEST(load_tree, returns_commit_tree) {
-    auto r{inc_repo(working_tree_t{{}})};
-    auto commit_hash = r.commit("message");
-    auto tree = load_tree(r.store.get_objects(), commit_hash);
-    ASSERT_TRUE(bool(tree));
-    EXPECT_EQ(tree_t{}, *tree);
-}
-
 TEST(repo_checkout, updates_index_files) {
     std::string content{"content"}, name{"name"};
     auto r{inc_repo(working_tree_t{{{name, content}}})};

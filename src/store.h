@@ -72,6 +72,12 @@ private:
 };
 
 /**
+ * Loads a commit and retrieves its tree.
+ */
+template <typename ObjectStore>
+boost::optional<tree_t> load_tree(const ObjectStore& objects, hash_t commit_hash);
+
+/**
  * Used as the index for Cit.
  * Contains the currently staged files.
  * Adding a file to the index stores the blob, and saves its new state.

@@ -40,6 +40,15 @@ boost::optional<Object> object_store_t<Serializer>::load(hash_t hash) const {
 }
 
 template <typename ObjectStore>
+boost::optional<tree_t> load_tree(const ObjectStore& objects, hash_t commit_hash) {
+    auto commit = objects.template load<commit_t>(commit_hash);
+    if (!commit) {
+        return boost::none;
+    }
+    return objects.template load<tree_t>((*commit).tree_hash);
+}
+
+template <typename ObjectStore>
 hash_t index_t<ObjectStore>::add(const name_t& name, const blob_t& blob) {
     hash_t hash = objects.store(blob);
     files.push_back({name, hash});

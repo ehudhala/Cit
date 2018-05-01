@@ -37,15 +37,6 @@ bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
     return false;
 }
 
-template <typename ObjectStore>
-boost::optional<tree_t> load_tree(const ObjectStore& objects, hash_t commit_hash) {
-    auto commit = objects.template load<commit_t>(commit_hash);
-    if (!commit) {
-        return boost::none;
-    }
-    return objects.template load<tree_t>((*commit).tree_hash);
-}
-
 }
 
 #endif
