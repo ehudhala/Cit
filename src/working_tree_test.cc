@@ -50,3 +50,21 @@ TEST(working_tree, write_updates_existing_file) {
     ASSERT_TRUE(bool(read_content));
     EXPECT_EQ(new_content, *read_content);
 }
+
+TEST(update_working_tree, updates_existing_files) {
+    working_tree_t tree{{{"name", "content"}}};
+    tree_content_t new_files{{"name", "new_content"}};
+    update_working_tree(tree, new_files);
+    auto read_content = tree.read("name");
+    ASSERT_TRUE(bool(read_content));
+    EXPECT_EQ("new_content", *read_content);
+}
+
+TEST(update_working_tree, creates_new_files) {
+    working_tree_t tree{{{}}};
+    tree_content_t new_files{{"name", "content"}};
+    update_working_tree(tree, new_files);
+    auto read_content = tree.read("name");
+    ASSERT_TRUE(bool(read_content));
+    EXPECT_EQ("content", *read_content);
+}

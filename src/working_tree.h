@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <map>
 
 #include "boost/optional.hpp"
@@ -10,6 +11,7 @@
 namespace cit {
 
 using name_t = std::string;
+using tree_content_t = std::map<name_t, std::string>;
 
 namespace inmemory {
 
@@ -46,10 +48,20 @@ public:
     bool contains(const name_t&);
 
 private:
-    std::map<name_t, std::string> working_tree;
+    tree_content_t working_tree;
 };
 
 }
+
+/**
+ * Updates the given working tree content according to a diff:
+ * 1. Creates all the new files
+ * 2. Deletes all the deleted files
+ * 3. Updates the content of all the changed files.
+ */
+template <typename WorkingTree>
+void update_working_tree(WorkingTree& tree, const tree_content_t&);
+
 }
 
 #endif
