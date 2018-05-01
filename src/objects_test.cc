@@ -42,3 +42,22 @@ TEST(serializer, deserialize_error_handling) {
     auto deserialized{serializer::deserialize<blob_t>("asdf")};
     ASSERT_FALSE(bool(deserialized));
 }
+
+TEST(tree_equals, similar_trees_equal) {
+    tree_t tree1{{{"name", 1}}};
+    tree_t tree2{{{"name", 1}}};
+    EXPECT_EQ(tree1, tree2);
+}
+
+TEST(tree_equals, different_amount_of_files_not_equal) {
+    tree_t tree1{{{"name", 1}}};
+    tree_t tree2{{{"name", 1}, {"name2", 2}}};
+    EXPECT_FALSE(tree1 == tree2);
+    EXPECT_FALSE(tree2 == tree1);
+}
+
+TEST(tree_equals, different_content_not_equal) {
+    tree_t tree1{{{"name", 1}}};
+    tree_t tree2{{{"name2", 1}}};
+    EXPECT_FALSE(tree1 == tree2);
+}

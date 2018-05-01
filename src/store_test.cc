@@ -95,6 +95,5 @@ TEST(index_update, updates_the_index) {
     file_t file{"updated", 123};
     std::vector<file_t> files{file};
     index.update(files);
-    EXPECT_EQ(file.name, index.files[0].name);
-    EXPECT_EQ(file.hash, index.files[0].hash);
+    EXPECT_EQ(files, index.files);
 }

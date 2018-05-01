@@ -84,6 +84,8 @@ using object_t = boost::variant<blob_t, commit_t, tree_t>;
  */
 bool operator==(const cit::object_t& obj, const cit::object_t& other);
 
+bool operator==(const cit::file_t& file, const cit::file_t& other);
+
 using optional_blob = boost::optional<blob_t>;
 using optional_commit = boost::optional<commit_t>;
 

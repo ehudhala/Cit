@@ -100,6 +100,7 @@ public:
     /**
      * The index contents.
      * Contains all the current files in the index.
+     * TODO: this should be private, externally we should have a method to access.
      */
     std::vector<file_t> files;
 
