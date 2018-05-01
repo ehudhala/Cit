@@ -88,3 +88,17 @@ TEST(load_tree, returns_commit_tree) {
     ASSERT_TRUE(bool(tree));
     EXPECT_EQ(tree_t{}, *tree);
 }
+
+TEST(repo_checkout, updates_index_files) {
+    std::string content{"content"}, name{"name"};
+    auto r{inc_repo(working_tree_t{{{name, content}}})};
+    auto blob_hash = r.add(name);
+    auto commit_hash = r.commit("message");
+    r.working_tree.write(name, "new_content");
+    r.add(name);
+    r.commit("new_commit");
+    r.checkout(commit_hash);
+    ASSERT_TRUE(bool(blob_hash));
+    std::vector<file_t> expected_files{{name, *blob_hash}};
+    EXPECT_EQ(expected_files, r.store.index.files);
+}

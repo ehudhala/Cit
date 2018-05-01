@@ -33,6 +33,7 @@ bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
     if (!tree) {
         return false;
     }
+    store.index.update((*tree).files);
     return false;
 }
 
