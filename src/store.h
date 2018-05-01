@@ -77,6 +77,9 @@ private:
 template <typename ObjectStore>
 boost::optional<tree_t> load_tree(const ObjectStore& objects, hash_t commit_hash);
 
+// TODO: we should add to objects many loads, probably as object methods
+// e.g. commit.load_tree, tree.load_file
+
 /**
  * Used as the index for Cit.
  * Contains the currently staged files.
