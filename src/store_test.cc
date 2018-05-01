@@ -63,11 +63,13 @@ TEST(inmemory_object_store_load, deserializtion_fails) {
 }
 
 TEST(load_tree, returns_commit_tree) {
-    auto r{inc_repo(working_tree_t{{}})};
-    auto commit_hash = r.commit("message");
-    auto tree = load_tree(r.store.get_objects(), commit_hash);
-    ASSERT_TRUE(bool(tree));
-    EXPECT_EQ(tree_t{}, *tree);
+    auto objects(inc_object_store());
+    tree_t tree{{}};
+    auto tree_hash = objects.store(tree);
+    auto commit_hash = objects.store(commit_t{"", tree_hash});
+    auto loaded_tree = load_tree(objects, commit_hash);
+    ASSERT_TRUE(bool(loaded_tree));
+    EXPECT_EQ(tree_t{}, *loaded_tree);
 }
 
 TEST(index_add, returns_hash) {
