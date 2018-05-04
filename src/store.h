@@ -71,18 +71,6 @@ private:
     std::map<hash_t, std::string> objects_map;
 };
 
-/**
- * Loads a commit and retrieves its tree.
- */
-template <typename ObjectStore>
-boost::optional<tree_t> load_tree(const ObjectStore&, hash_t commit_hash);
-
-/**
- * Loads all the content of the given tree.
- */
-template <typename ObjectStore>
-boost::optional<tree_content_t> load_tree_content(const ObjectStore&, tree_t tree);
-
 // TODO: we should add to objects many loads, probably as object methods
 // e.g. commit.load_tree, tree.load_file
 
@@ -134,6 +122,18 @@ struct store_t {
     optional_hash head; // false before the first commit.
     // TODO: dummy first commit instead?
 };
+
+/**
+ * Loads a commit and retrieves its tree.
+ */
+template <typename ObjectStore>
+boost::optional<tree_t> load_tree(const ObjectStore&, hash_t commit_hash);
+
+/**
+ * Loads all the content of the given tree.
+ */
+template <typename ObjectStore>
+boost::optional<tree_content_t> load_tree_content(const ObjectStore&, tree_t tree);
 
 }
 

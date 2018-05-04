@@ -34,6 +34,12 @@ bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
         return false;
     }
     store.index.update((*tree).files);
+
+    auto tree_content = load_tree_content(store.get_objects(), *tree);
+    if (!tree_content) {
+        return false;
+    }
+    update_working_tree(working_tree, *tree_content);
     return false;
 }
 

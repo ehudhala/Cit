@@ -96,14 +96,19 @@ TEST(repo_checkout, updates_index_files) {
 }
 
 TEST(repo_checkout, updates_working_tree) {
-    std::string content{"content"}, name{"name"};
+    std::string content{"content"}, name{"name"}, 
+        deleted_on_checkout{"deleted"};
     auto r{inc_repo(working_tree_t{{{name, content}}})};
     auto blob_hash = r.add(name);
     auto commit_hash = r.commit("message");
     r.working_tree.write(name, "new_content");
+    r.working_tree.write(deleted_on_checkout, content);
     r.add(name);
+    r.add(deleted_on_checkout);
     r.commit("new_commit");
     r.checkout(commit_hash);
+
     auto working_tree_content = *r.working_tree.read(name);
     EXPECT_EQ(content, working_tree_content);
+    EXPECT_FALSE(r.working_tree.contains(deleted_on_checkout));
 }

@@ -40,6 +40,25 @@ boost::optional<Object> object_store_t<Serializer>::load(hash_t hash) const {
 }
 
 template <typename ObjectStore>
+hash_t index_t<ObjectStore>::add(const name_t& name, const blob_t& blob) {
+    hash_t hash = objects.store(blob);
+    files.push_back({name, hash});
+    return hash;
+}
+
+template <typename ObjectStore>
+void index_t<ObjectStore>::update(std::vector<file_t> new_files) {
+    files = std::move(new_files);
+}
+
+}
+
+template <typename Index>
+typename store_t<Index>::object_store& store_t<Index>::get_objects() {
+    return index.objects;
+}
+
+template <typename ObjectStore>
 boost::optional<tree_t> load_tree(const ObjectStore& objects, hash_t commit_hash) {
     auto commit = objects.template load<commit_t>(commit_hash);
     if (!commit) {
@@ -59,25 +78,6 @@ boost::optional<tree_content_t> load_tree_content(const ObjectStore& objects, tr
         content[file.name] = (*blob).content;
     }
     return content;
-}
-
-template <typename ObjectStore>
-hash_t index_t<ObjectStore>::add(const name_t& name, const blob_t& blob) {
-    hash_t hash = objects.store(blob);
-    files.push_back({name, hash});
-    return hash;
-}
-
-template <typename ObjectStore>
-void index_t<ObjectStore>::update(std::vector<file_t> new_files) {
-    files = std::move(new_files);
-}
-
-}
-
-template <typename Index>
-typename store_t<Index>::object_store& store_t<Index>::get_objects() {
-    return index.objects;
 }
 
 }
