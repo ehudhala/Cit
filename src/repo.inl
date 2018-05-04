@@ -39,8 +39,11 @@ bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
     if (!tree_content) {
         return false;
     }
+    // TODO: check whether the checkout is compatiable with the working copy (conflict)
+    // currently we just delete the working copy regardless on checkout.
     update_working_tree(working_tree, *tree_content);
-    return false;
+    store.head = commit_hash;
+    return true;
 }
 
 }

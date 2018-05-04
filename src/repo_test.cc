@@ -112,3 +112,11 @@ TEST(repo_checkout, updates_working_tree) {
     EXPECT_EQ(content, working_tree_content);
     EXPECT_FALSE(r.working_tree.contains(deleted_on_checkout));
 }
+
+TEST(repo_checkout, updates_head) {
+    auto r{inc_repo(working_tree_t{{}})};
+    auto commit_hash = r.commit("message");
+    r.commit("new_commit");
+    r.checkout(commit_hash);
+    EXPECT_EQ(commit_hash, *r.store.head);
+}
