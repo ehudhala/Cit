@@ -4,25 +4,33 @@
 namespace cit {
 namespace inmemory {
 
+
+working_tree_t::working_tree_t(tree_content_t tree_content)
+    : tree_content(tree_content) {}
+
 std::vector<name_t> working_tree_t::list() {
     std::vector<name_t> names;
-    names.reserve(working_tree.size());
-    std::transform(working_tree.begin(), working_tree.end(), 
+    names.reserve(tree_content.size());
+    std::transform(tree_content.begin(), tree_content.end(), 
             std::back_inserter(names), [](auto name) {return name.first;});
     return names;
 }
 
 boost::optional<const std::string&> working_tree_t::read(const name_t& name) {
-    return optional_read<name_t, std::string, const std::string&>(working_tree, name);
+    return optional_read<name_t, std::string, const std::string&>(tree_content, name);
 }
 
 void working_tree_t::write(const name_t& name, std::string content) {
-    working_tree[name] = content;
+    tree_content[name] = content;
 }
 
 bool working_tree_t::contains(const name_t& name) {
     // Read returns a const-ref, so we can safely use its implementation and discard the result.
     return bool(read(name));
+}
+
+void working_tree_t::remove(const name_t& name) {
+    tree_content.erase(name);
 }
 
 }

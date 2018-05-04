@@ -22,8 +22,7 @@ namespace inmemory {
  */
 class working_tree_t {
 public:
-    working_tree_t(std::map<name_t, std::string> working_tree)
-        : working_tree(working_tree) {}
+    working_tree_t(tree_content_t);
 
     /**
      * Lists the files currently in the working tree.
@@ -47,8 +46,13 @@ public:
      */
     bool contains(const name_t&);
 
+    /**
+     * Deletes the file with the given name.
+     */
+    void remove(const name_t&);
+
 private:
-    tree_content_t working_tree;
+    tree_content_t tree_content;
 };
 
 }

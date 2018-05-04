@@ -33,7 +33,7 @@ TEST(working_tree_contains, non_existing) {
     EXPECT_FALSE(tree.contains("non_existing"));
 }
 
-TEST(working_tree, write_creates_new_file) {
+TEST(working_tree_write, creates_new_file) {
     working_tree_t tree{{{}}};
     std::string content = "content";
     tree.write("name", content);
@@ -42,13 +42,31 @@ TEST(working_tree, write_creates_new_file) {
     EXPECT_EQ(content, *read_content);
 }
 
-TEST(working_tree, write_updates_existing_file) {
+TEST(working_tree_write, updates_existing_file) {
     working_tree_t tree{{{"name", "content"}}};
     std::string new_content = "new_content";
     tree.write("name", new_content);
     auto read_content = tree.read("name");
     ASSERT_TRUE(bool(read_content));
     EXPECT_EQ(new_content, *read_content);
+}
+
+TEST(working_tree_remove, existing_file) {
+    working_tree_t tree{{{"name", "content"}}};
+    tree.remove("name");
+    EXPECT_FALSE(tree.contains("name"));
+}
+
+TEST(working_tree_remove, one_of_many_files) {
+    working_tree_t tree{{{"name", "content"}, {"name2", "content"}}};
+    tree.remove("name");
+    EXPECT_TRUE(tree.contains("name2"));
+}
+
+TEST(working_tree_remove, non_existing_file) {
+    working_tree_t tree{{{"name", "content"}}};
+    tree.remove("non_existting_name");
+    EXPECT_TRUE(tree.contains("name"));
 }
 
 TEST(update_working_tree, updates_existing_files) {
