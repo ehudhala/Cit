@@ -87,6 +87,13 @@ TEST(update_working_tree, creates_new_files) {
     EXPECT_EQ("content", *read_content);
 }
 
+TEST(update_working_tree, removes_deleted_files) {
+    working_tree_t tree{{{{"name", "content"}}}};
+    tree_content_t new_files{{"other_name", "content"}};
+    update_working_tree(tree, new_files);
+    EXPECT_FALSE(tree.contains("name"));
+}
+
 TEST(diff_deleted, no_diff) {
     working_tree_t tree{{{"name", "content_doesnt_matter"}}};
     tree_content_t new_files{{"name", "content"}};

@@ -40,11 +40,10 @@ void update_working_tree(WorkingTree& tree, const tree_content_t& new_content) {
     for (const auto& new_file : new_content) {
         tree.write(new_file.first, new_file.second);
     }
-
-    // TODO: review recent commits for unneccesary copies.
-
-    // auto tree_list = tree.list();
-
+    auto deleted_files = diff_deleted(std::move(tree.list()), new_content);
+    for (const auto& deleted_file : deleted_files) {
+        tree.remove(deleted_file);
+    }
 }
 
 template void update_working_tree(inmemory::working_tree_t&, const tree_content_t&); 
