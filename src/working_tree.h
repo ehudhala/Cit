@@ -3,8 +3,8 @@
 
 #include <string>
 #include <vector>
-#include <set>
 #include <map>
+#include <algorithm>
 
 #include "boost/optional.hpp"
 
@@ -61,6 +61,12 @@ private:
  */
 template <typename WorkingTree>
 void update_working_tree(WorkingTree& tree, const tree_content_t&);
+
+/**
+ * Calculates and returns the difference between the new and old file names.
+ * (all the items that appear in the old set but not in the new).
+ */
+std::vector<name_t> diff_deleted(std::vector<name_t> old, const tree_content_t& new_content);
 
 }
 

@@ -68,3 +68,38 @@ TEST(update_working_tree, creates_new_files) {
     ASSERT_TRUE(bool(read_content));
     EXPECT_EQ("content", *read_content);
 }
+
+TEST(diff_deleted, no_diff) {
+    working_tree_t tree{{{"name", "content_doesnt_matter"}}};
+    tree_content_t new_files{{"name", "content"}};
+    auto diff = diff_deleted(tree.list(), new_files);
+    EXPECT_EQ(std::vector<name_t>{}, diff);
+}
+
+TEST(diff_deleted, added_files) {
+    working_tree_t tree{{{"name", "content"}}};
+    tree_content_t new_files{{"name", "content"}, {"new_name", "content"}};
+    auto diff = diff_deleted(tree.list(), new_files);
+    EXPECT_EQ(std::vector<name_t>{}, diff);
+}
+
+TEST(diff_deleted, deleted_files) {
+    working_tree_t tree{{{"name", "content"}}};
+    tree_content_t new_files{{}};
+    auto diff = diff_deleted(tree.list(), new_files);
+    EXPECT_EQ(std::vector<name_t>{"name"}, diff);
+}
+
+TEST(diff_deleted, deleted_part_of_files) {
+    working_tree_t tree{{{"name", "content"}, {"name2", "content"}}};
+    tree_content_t new_files{{{"name2", "content"}}};
+    auto diff = diff_deleted(tree.list(), new_files);
+    EXPECT_EQ(std::vector<name_t>{"name"}, diff);
+}
+
+TEST(diff_deleted, deleted_files_and_new_files) {
+    working_tree_t tree{{{"name", "content"}}};
+    tree_content_t new_files{{"new_name", "content"}};
+    auto diff = diff_deleted(tree.list(), new_files);
+    EXPECT_EQ(std::vector<name_t>{"name"}, diff);
+}
