@@ -75,7 +75,13 @@ private:
  * Loads a commit and retrieves its tree.
  */
 template <typename ObjectStore>
-boost::optional<tree_t> load_tree(const ObjectStore& objects, hash_t commit_hash);
+boost::optional<tree_t> load_tree(const ObjectStore&, hash_t commit_hash);
+
+/**
+ * Loads all the content of the given tree.
+ */
+template <typename ObjectStore>
+boost::optional<tree_content_t> load_tree_content(const ObjectStore&, tree_t tree);
 
 // TODO: we should add to objects many loads, probably as object methods
 // e.g. commit.load_tree, tree.load_file

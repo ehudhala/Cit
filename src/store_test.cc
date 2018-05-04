@@ -72,6 +72,23 @@ TEST(load_tree, returns_commit_tree) {
     EXPECT_EQ(tree_t{}, *loaded_tree);
 }
 
+TEST(load_tree_content, loads_tree_content) {
+    auto objects(inc_object_store());
+    auto blob_hash = objects.store(blob_t{"content"});
+    tree_t tree{{{"name", blob_hash}}};
+    auto tree_content = load_tree_content(objects, tree);
+    ASSERT_TRUE(bool(tree_content));
+    tree_content_t expected_content{{"name", "content"}};
+    EXPECT_EQ(expected_content, *tree_content);
+}
+
+TEST(load_tree_content, returns_none_when_blob_doesnt_exist) {
+    auto objects(inc_object_store());
+    tree_t tree{{{"name", 123}}};
+    auto tree_content = load_tree_content(objects, tree);
+    ASSERT_FALSE(bool(tree_content));
+}
+
 TEST(index_add, returns_hash) {
     index_t index{inc_index()};
     blob_t blob{"asdf"};

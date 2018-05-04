@@ -49,6 +49,19 @@ boost::optional<tree_t> load_tree(const ObjectStore& objects, hash_t commit_hash
 }
 
 template <typename ObjectStore>
+boost::optional<tree_content_t> load_tree_content(const ObjectStore& objects, tree_t tree) {
+    tree_content_t content;
+    for (const auto& file : tree.files) {
+        auto blob = objects.template load<blob_t>(file.blob_hash);
+        if (!blob) {
+            return boost::none;
+        }
+        content[file.name] = (*blob).content;
+    }
+    return content;
+}
+
+template <typename ObjectStore>
 hash_t index_t<ObjectStore>::add(const name_t& name, const blob_t& blob) {
     hash_t hash = objects.store(blob);
     files.push_back({name, hash});
