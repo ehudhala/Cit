@@ -48,6 +48,10 @@ bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
     return true;
 }
 
+// Instantiations
+
+template class repo_t<store_t<inmemory::index_t<inmemory::object_store_t<serializer>>>, inmemory::working_tree_t>;
+
 }
 
 #endif
