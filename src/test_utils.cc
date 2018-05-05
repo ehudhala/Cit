@@ -24,7 +24,8 @@ index_t inc_index() {
 store inc_store() {
     auto objects{inc_object_store()};
     auto index{inc_index()};
-    return store(std::move(index));
+    inmemory::ref_store_t refs;
+    return store(std::move(index), std::move(refs));
 }
 
 repo inc_repo(working_tree_t tree) {

@@ -61,9 +61,14 @@ boost::optional<ref_t> ref_store_t::load(const ref_name_t& ref_name) const {
 
 }
 
-template <typename Index>
-typename store_t<Index>::object_store& store_t<Index>::get_objects() {
+template <typename Index, typename RefStore>
+typename store_t<Index, RefStore>::object_store& store_t<Index, RefStore>::get_objects() {
     return index.objects;
+}
+
+template <typename Index, typename RefStore>
+RefStore& store_t<Index, RefStore>::get_refs() {
+    return refs;
 }
 
 template <typename ObjectStore>
@@ -95,7 +100,7 @@ namespace inmemory {
 template class object_store_t<serializer>;
 template class index_t<object_store>;
 }
-template struct store_t<index>;
+template struct store_t<index, inmemory::ref_store_t>;
 
 template boost::optional<tree_t> load_tree(const object_store&, hash_t commit_hash);
 template boost::optional<tree_content_t> load_tree_content(const object_store&, tree_t);

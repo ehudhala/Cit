@@ -126,13 +126,17 @@ private:
 
 }
 
-template <typename Index>
+template <typename Index, typename RefStore>
 struct store_t {
     using object_store = typename Index::object_store;
-    store_t(Index index) : index(index) {}
+    store_t(Index index, RefStore refs) :
+        index(index), refs(refs) {}
 
     object_store& get_objects();
+    RefStore& get_refs();
+
     Index index;
+    RefStore refs;
     optional_hash head; // false before the first commit.
     // TODO: dummy first commit instead?
 };

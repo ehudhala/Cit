@@ -50,7 +50,7 @@ bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
 
 // Instantiations
 
-template class repo_t<store_t<inmemory::index_t<inmemory::object_store_t<serializer>>>, inmemory::working_tree_t>;
+template class repo_t<store_t<inmemory::index_t<inmemory::object_store_t<serializer>>, inmemory::ref_store_t>, inmemory::working_tree_t>;
 
 }
 
