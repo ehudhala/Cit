@@ -133,10 +133,8 @@ boost::optional<tree_t> load_tree(const ObjectStore&, hash_t commit_hash);
  * Loads all the content of the given tree.
  */
 template <typename ObjectStore>
-boost::optional<tree_content_t> load_tree_content(const ObjectStore&, tree_t tree);
+boost::optional<tree_content_t> load_tree_content(const ObjectStore&, tree_t);
 
 }
 
 #endif
-
-#include "store.inl"

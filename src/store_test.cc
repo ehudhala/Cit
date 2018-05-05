@@ -4,6 +4,7 @@
 #include "store.h"
 
 #include "test_utils.h"
+#include "utils.h"
 
 using namespace cit;
 
@@ -45,14 +46,6 @@ TEST(inmemory_object_store_load, blob_returns_stored) {
     ASSERT_TRUE(bool(loaded));
     EXPECT_TRUE(blob == *loaded);
 }
-
-struct failing_deserializtion {
-    static std::string serialize(const object_t&) {return "";}
-    template <class Object>
-    static boost::optional<Object> deserialize(const std::string&) {
-        return boost::none;
-    }
-};
 
 TEST(inmemory_object_store_load, deserializtion_fails) {
     inmemory::object_store_t<failing_deserializtion> objects(incrementing_hash_func{});

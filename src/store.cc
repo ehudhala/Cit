@@ -80,6 +80,21 @@ boost::optional<tree_content_t> load_tree_content(const ObjectStore& objects, tr
     return content;
 }
 
+// Instantiations
+using object_store = inmemory::object_store_t<serializer>;
+using index = inmemory::index_t<object_store>;
+namespace inmemory {
+template class object_store_t<serializer>;
+template class index_t<object_store>;
+}
+template struct store_t<index>;
+
+template boost::optional<tree_t> load_tree(const object_store&, hash_t commit_hash);
+template boost::optional<tree_content_t> load_tree_content(const object_store&, tree_t);
+
+template class inmemory::object_store_t<failing_deserializtion>; // For tests.
+template boost::optional<blob_t> inmemory::object_store_t<failing_deserializtion>::load(hash_t) const;
+
 }
 
 #endif
