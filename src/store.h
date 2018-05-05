@@ -7,11 +7,15 @@
 #include <type_traits>
 
 #include "boost/optional.hpp"
+#include "boost/variant.hpp"
 
 #include "objects.h"
 #include "working_tree.h"
 
 namespace cit {
+
+using ref_name_t = std::string;
+using ref_t = boost::variant<ref_name_t, hash_t>;
 
 namespace inmemory {
 
@@ -84,6 +88,7 @@ class index_t {
 public:
     // TODO: rename object_store according to conventions.
     using object_store = ObjectStore;
+
     /**
      * The index is injected with the object_store it should store objects to.
      */
@@ -108,6 +113,15 @@ public:
     std::vector<file_t> files;
 
     ObjectStore objects;
+};
+
+class ref_store_t {
+public:
+    void update(const ref_name_t&, ref_t);
+    boost::optional<ref_t> load(const ref_name_t&) const;
+
+private:
+    std::map<ref_name_t, ref_t> refs;
 };
 
 }

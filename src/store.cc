@@ -51,6 +51,14 @@ void index_t<ObjectStore>::update(std::vector<file_t> new_files) {
     files = std::move(new_files);
 }
 
+void ref_store_t::update(const ref_name_t& ref_name, ref_t ref) {
+    refs[ref_name] = ref;
+}
+
+boost::optional<ref_t> ref_store_t::load(const ref_name_t& ref_name) const {
+    return optional_read<ref_name_t, ref_t, ref_t>(refs, ref_name);
+}
+
 }
 
 template <typename Index>

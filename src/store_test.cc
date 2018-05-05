@@ -117,3 +117,25 @@ TEST(index_update, updates_the_index) {
     index.update(files);
     EXPECT_EQ(files, index.files);
 }
+
+TEST(ref_store, load_non_existent) {
+    inmemory::ref_store_t ref_store;
+    EXPECT_FALSE(bool(ref_store.load("non_existent")));
+}
+
+TEST(ref_store, update_and_load_hash) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("hash", 123);
+    auto ref{ref_store.load("hash")};
+    ASSERT_TRUE(bool(ref));
+    EXPECT_EQ(123, boost::get<hash_t>(*ref));
+}
+
+TEST(ref_store, update_and_load_recursive_ref_name) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("hash", 123);
+    ref_store.update("name", "hash");
+    auto name_ref{ref_store.load("name")};
+    ASSERT_TRUE(bool(name_ref));
+    EXPECT_EQ("hash", boost::get<ref_name_t>(*name_ref));
+}
