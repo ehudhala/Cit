@@ -29,6 +29,8 @@ hash_t repo_t<Store, WorkingTree>::commit(const std::string& message) {
 // for the first phase it's not atomic though.
 template <typename Store, typename WorkingTree>
 bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
+    // TODO: better error handling. 
+    // Currently we just return false on error, with no reason provided.
     auto tree = load_tree(store.get_objects(), commit_hash);
     if (!tree) {
         return false;
