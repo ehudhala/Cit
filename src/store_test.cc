@@ -139,3 +139,33 @@ TEST(ref_store, update_and_load_recursive_ref_name) {
     ASSERT_TRUE(bool(name_ref));
     EXPECT_EQ("hash", boost::get<ref_name_t>(*name_ref));
 }
+
+TEST(get_ref_hash, hash_ref) {
+    inmemory::ref_store_t ref_store;
+    auto hash = get_ref_hash(ref_store, 123);
+    ASSERT_TRUE(bool(hash));
+    EXPECT_EQ(123, *hash);
+}
+
+TEST(get_ref_hash, name_not_pointing_to_hash) {
+    inmemory::ref_store_t ref_store;
+    auto hash = get_ref_hash(ref_store, "non_existent_name");
+    ASSERT_FALSE(bool(hash));
+}
+
+TEST(get_ref_hash, name_pointing_to_hash) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("hash", 123);
+    auto hash = get_ref_hash(ref_store, "hash");
+    ASSERT_TRUE(bool(hash));
+    EXPECT_EQ(123, *hash);
+}
+
+TEST(get_ref_hash, recursive_name_pointing_to_hash) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("hash", 123);
+    ref_store.update("name", "hash");
+    auto hash = get_ref_hash(ref_store, "name");
+    ASSERT_TRUE(bool(hash));
+    EXPECT_EQ(123, *hash);
+}

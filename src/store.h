@@ -17,6 +17,12 @@ namespace cit {
 using ref_name_t = std::string;
 using ref_t = boost::variant<ref_name_t, hash_t>;
 
+/**
+ * Recursively loads names from the store to get the hash of the given ref.
+ */
+template <typename RefStore>
+boost::optional<hash_t> get_ref_hash(const RefStore&, ref_t);
+
 namespace inmemory {
 
 using hash_func_t = std::function<hash_t(const std::string&)>;

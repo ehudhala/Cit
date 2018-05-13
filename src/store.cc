@@ -61,14 +61,32 @@ boost::optional<ref_t> ref_store_t::load(const ref_name_t& ref_name) const {
 
 }
 
-template <typename Index, typename RefStore>
-typename store_t<Index, RefStore>::object_store& store_t<Index, RefStore>::get_objects() {
-    return index.objects;
+template <typename RefStore>
+struct get_ref_hash_visitor {
+    get_ref_hash_visitor(const RefStore& refs) : refs(refs) {}
+    boost::optional<hash_t> operator()(const hash_t& hash) const {
+        return hash;
+    }
+
+    boost::optional<hash_t> operator()(const ref_name_t& ref_name) const {
+        auto loaded_ref{refs.load(ref_name)};
+        if (!loaded_ref) {
+            return boost::none;
+        }
+        return boost::apply_visitor(*this, *loaded_ref);
+    }
+
+    const RefStore& refs;
+};
+
+template <typename RefStore>
+boost::optional<hash_t> get_ref_hash(const RefStore& refs, ref_t ref) {
+    return boost::apply_visitor(get_ref_hash_visitor<RefStore>{refs}, ref);
 }
 
 template <typename Index, typename RefStore>
-RefStore& store_t<Index, RefStore>::get_refs() {
-    return refs;
+typename store_t<Index, RefStore>::object_store& store_t<Index, RefStore>::get_objects() {
+    return index.objects;
 }
 
 template <typename ObjectStore>
@@ -107,6 +125,8 @@ template boost::optional<tree_content_t> load_tree_content(const object_store&, 
 
 template class inmemory::object_store_t<failing_deserializtion>; // For tests.
 template boost::optional<blob_t> inmemory::object_store_t<failing_deserializtion>::load(hash_t) const;
+
+template boost::optional<hash_t> get_ref_hash(const inmemory::ref_store_t&, ref_t);
 
 }
 
