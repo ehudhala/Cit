@@ -26,6 +26,19 @@ boost::optional<hash_t> get_ref_hash(const RefStore&, ref_t);
 /**
  * Updates the hash the ref points to without changing ref names.
  * Only updates the deepest hash in the chain of names.
+ * Returns the new ref.
+ *  If the given ref is a hash, just returns the new hash.
+ *  If the given ref is a name returns the given name, and updates the deep pointed hash.
+ * e.g.:
+ *      update_ref_hash(123, 456) -> 456
+ *      update_ref_hash("ref_name", 456) -> "ref_name"
+ */
+template <typename RefStore>
+ref_t update_ref_hash(RefStore&, ref_t, hash_t new_hash);
+
+/**
+ * Updates the hash the ref points to without changing ref names.
+ * Only updates the deepest hash in the chain of names.
  */
 template <typename RefStore>
 void update_ref_deep_hash(RefStore&, ref_name_t, hash_t new_hash);

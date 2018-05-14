@@ -79,6 +79,20 @@ boost::optional<hash_t> get_ref_hash(const RefStore& refs, ref_t ref) {
     return boost::apply_visitor(visitor, ref);
 }
 
+// TODO: maybe this should be two overloaded functions.
+template <typename RefStore>
+ref_t update_ref_hash(RefStore& refs, ref_t ref, hash_t new_hash) {
+    auto visitor = boost::hana::overload(
+        [&refs, new_hash](const hash_t&) -> ref_t {
+            return new_hash;
+        },
+        [&refs, new_hash](const ref_name_t& ref_name) -> ref_t {
+            update_ref_deep_hash(refs, ref_name, new_hash);
+            return ref_name;
+        }
+    );
+    return boost::apply_visitor(visitor, ref);
+}
 
 template <typename RefStore>
 void update_ref_deep_hash(RefStore& refs, ref_name_t ref_name, hash_t new_hash) {
@@ -143,6 +157,7 @@ template boost::optional<blob_t> inmemory::object_store_t<failing_deserializtion
 
 template boost::optional<hash_t> get_ref_hash(const inmemory::ref_store_t&, ref_t);
 
+template ref_t update_ref_hash(inmemory::ref_store_t&, ref_t, hash_t);
 template void update_ref_deep_hash(inmemory::ref_store_t&, ref_name_t, hash_t);
 
 }

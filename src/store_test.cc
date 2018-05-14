@@ -197,3 +197,25 @@ TEST(update_ref_deep_hash, name_doesnt_point_to_hash) {
     ASSERT_TRUE(bool(loaded_hash));
     EXPECT_EQ(456, boost::get<hash_t>(*loaded_hash));
 }
+
+TEST(update_ref_hash, given_hash) {
+    inmemory::ref_store_t ref_store;
+    auto new_hash = update_ref_hash(ref_store, 123, 456);
+    EXPECT_EQ(456, boost::get<hash_t>(new_hash));
+}
+
+TEST(update_ref_hash, given_name_deep_updates_hash) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("hash", 123);
+    ref_store.update("name", "hash");
+    update_ref_hash(ref_store, "name", 456);
+    auto loaded_hash{ref_store.load("hash")};
+    ASSERT_TRUE(bool(loaded_hash));
+    EXPECT_EQ(456, boost::get<hash_t>(*loaded_hash));
+}
+
+TEST(update_ref_hash, given_name_returns_name) {
+    inmemory::ref_store_t ref_store;
+    auto new_ref = update_ref_hash(ref_store, "name", 456);
+    EXPECT_EQ("name", boost::get<ref_name_t>(new_ref));
+}
