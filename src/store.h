@@ -121,9 +121,22 @@ public:
     ObjectStore objects;
 };
 
+/**
+ * Stores all the refs to commits.
+ * Allows updating and loading them, most of the code using the ref should use
+ * cit::get_ref_hash and cit::update_ref_hash
+ */
 class ref_store_t {
 public:
+    /**
+     * Updates the ref with the given ref name to hold the new given ref.
+     */
     void update(const ref_name_t&, ref_t);
+
+    /**
+     * Loads the ref content of the given ref name.
+     * Returns either the loaded ref, or none if the ref doesn't point to anything.
+     */
     boost::optional<ref_t> load(const ref_name_t&) const;
 
 private:
@@ -139,7 +152,6 @@ struct store_t {
         index(index), refs(refs) {}
 
     object_store& get_objects();
-    RefStore& get_refs();
 
     Index index;
     RefStore refs;
