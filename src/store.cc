@@ -1,8 +1,9 @@
 #ifndef _CIT_STORE_INL_
 #define _CIT_STORE_INL_
 
-#include "store.h"
+#include "boost/hana/functional/overload.hpp"
 
+#include "store.h"
 #include "utils.h"
 
 namespace cit {
@@ -62,19 +63,21 @@ boost::optional<ref_t> ref_store_t::load(const ref_name_t& ref_name) const {
 }
 
 template <typename RefStore>
-struct get_ref_hash_visitor {
-    get_ref_hash_visitor(const RefStore& refs) : refs(refs) {}
-    boost::optional<hash_t> operator()(const hash_t& hash) const {
-        return hash;
-    }
-
-    boost::optional<hash_t> operator()(const ref_name_t& ref_name) const {
-        auto loaded_ref{refs.load(ref_name)};
-        if (!loaded_ref) {
-            return boost::none;
+boost::optional<hash_t> get_ref_hash(const RefStore& refs, ref_t ref) {
+    auto visitor = boost::hana::overload(
+        [&refs](const hash_t& hash) -> boost::optional<hash_t> {
+            return hash;
+        },
+        [&refs](const ref_name_t& ref_name) -> boost::optional<hash_t> {
+            auto loaded_ref{refs.load(ref_name)};
+            if (!loaded_ref) {
+                return boost::none;
+            }
+            return get_ref_hash(refs, *loaded_ref);
         }
-        return boost::apply_visitor(*this, *loaded_ref);
-    }
+    );
+    return boost::apply_visitor(visitor, ref);
+}
 
     const RefStore& refs;
 };
