@@ -79,12 +79,24 @@ boost::optional<hash_t> get_ref_hash(const RefStore& refs, ref_t ref) {
     return boost::apply_visitor(visitor, ref);
 }
 
-    const RefStore& refs;
-};
 
 template <typename RefStore>
-boost::optional<hash_t> get_ref_hash(const RefStore& refs, ref_t ref) {
-    return boost::apply_visitor(get_ref_hash_visitor<RefStore>{refs}, ref);
+void update_ref_deep_hash(RefStore& refs, ref_name_t ref_name, hash_t new_hash) {
+    auto son_ref{refs.load(ref_name)};
+    if (!son_ref) {
+        refs.update(ref_name, new_hash);
+    }
+    else {
+        auto visitor = boost::hana::overload(
+            [&refs, &ref_name, new_hash](const hash_t&) {
+                refs.update(ref_name, new_hash);
+            },
+            [&refs, new_hash](const ref_name_t& son_name) {
+                update_ref_deep_hash(refs, son_name, new_hash);
+            }
+        );
+        boost::apply_visitor(visitor, *son_ref);
+    }
 }
 
 template <typename Index, typename RefStore>
@@ -130,6 +142,8 @@ template class inmemory::object_store_t<failing_deserializtion>; // For tests.
 template boost::optional<blob_t> inmemory::object_store_t<failing_deserializtion>::load(hash_t) const;
 
 template boost::optional<hash_t> get_ref_hash(const inmemory::ref_store_t&, ref_t);
+
+template void update_ref_deep_hash(inmemory::ref_store_t&, ref_name_t, hash_t);
 
 }
 

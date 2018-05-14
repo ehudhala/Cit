@@ -23,6 +23,13 @@ using ref_t = boost::variant<ref_name_t, hash_t>;
 template <typename RefStore>
 boost::optional<hash_t> get_ref_hash(const RefStore&, ref_t);
 
+/**
+ * Updates the hash the ref points to without changing ref names.
+ * Only updates the deepest hash in the chain of names.
+ */
+template <typename RefStore>
+void update_ref_deep_hash(RefStore&, ref_name_t, hash_t new_hash);
+
 namespace inmemory {
 
 using hash_func_t = std::function<hash_t(const std::string&)>;
