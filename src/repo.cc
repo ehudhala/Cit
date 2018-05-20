@@ -50,16 +50,12 @@ bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
 
 template <typename Store, typename WorkingTree>
 bool repo_t<Store, WorkingTree>::checkout(ref_name_t ref_name) {
-    if (!store.refs.exists(ref_name)) {
+    auto ref_hash{get_ref_hash(store.refs, ref_name)};
+    if (!ref_hash) {
         return false;
     }
     store.head = ref_name;
-    auto new_hash{store.get_head_hash()};
-    if (!new_hash) {
-        // Redundant check because we already checked that it exists.
-        return false;
-    }
-    return checkout(*new_hash);
+    return checkout(*ref_hash);
 }
 
 template <typename Store, typename WorkingTree>
