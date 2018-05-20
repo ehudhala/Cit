@@ -140,6 +140,17 @@ TEST(ref_store, update_and_load_recursive_ref_name) {
     EXPECT_EQ("hash", boost::get<ref_name_t>(*name_ref));
 }
 
+TEST(ref_store_exists, non_existent) {
+    inmemory::ref_store_t ref_store;
+    EXPECT_FALSE(ref_store.exists("non_existent"));
+}
+
+TEST(ref_store_exists, existent) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("hash", 123);
+    EXPECT_TRUE(ref_store.exists("hash"));
+}
+
 TEST(get_ref_hash, hash_ref) {
     inmemory::ref_store_t ref_store;
     auto hash = get_ref_hash(ref_store, 123);

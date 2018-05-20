@@ -158,6 +158,12 @@ public:
      * Returns either the loaded ref, or none if the ref doesn't point to anything.
      */
     boost::optional<ref_t> load(const ref_name_t&) const;
+    // TODO: maybe return a const reference to the ref.
+
+    /**
+     * Returns whether the given ref name exists or not.
+     */
+    bool exists(const ref_name_t&) const;
 
 private:
     std::map<ref_name_t, ref_t> refs;
