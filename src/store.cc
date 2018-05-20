@@ -60,11 +60,6 @@ boost::optional<ref_t> ref_store_t::load(const ref_name_t& ref_name) const {
     return optional_read<ref_name_t, ref_t, ref_t>(refs, ref_name);
 }
 
-bool ref_store_t::exists(const ref_name_t& ref_name) const {
-    auto it = refs.find(ref_name);
-    return it != refs.end();
-}
-
 }
 
 template <typename RefStore>
