@@ -168,8 +168,8 @@ private:
 template <typename Index, typename RefStore>
 struct store_t {
     using object_store = typename Index::object_store;
-    store_t(Index index, RefStore refs) :
-        index(index), refs(refs) {}
+    store_t(Index index, RefStore refs, ref_t head);
+    store_t(Index index, RefStore refs);
 
     object_store& get_objects();
 
@@ -178,7 +178,8 @@ struct store_t {
 
     Index index;
     RefStore refs;
-    boost::optional<ref_t> head; // false before the first commit.
+    ref_t head;
+    inline static const ref_t default_ref{"master"};
     // TODO: dummy first commit instead?
     // TODO: currently to get/update hash we have methods,
     // and to get/update the ref itself (e.g. to give it a name) we mutate head.

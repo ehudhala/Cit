@@ -114,28 +114,26 @@ void update_ref_deep_hash(RefStore& refs, ref_name_t ref_name, hash_t new_hash) 
 }
 
 template <typename Index, typename RefStore>
+store_t<Index, RefStore>::store_t(Index index, RefStore refs, ref_t head)
+    : index(index), refs(refs), head(head) {}
+
+template <typename Index, typename RefStore>
+store_t<Index, RefStore>::store_t(Index index, RefStore refs)
+    : index(index), refs(refs), head(default_ref) {}
+
+template <typename Index, typename RefStore>
 typename store_t<Index, RefStore>::object_store& store_t<Index, RefStore>::get_objects() {
     return index.objects;
 }
 
 template <typename Index, typename RefStore>
 optional_hash store_t<Index, RefStore>::get_head_hash() const {
-    if (!head) {
-        return boost::none;
-    }
-    else {
-        return get_ref_hash(refs, *head);
-    }
+    return get_ref_hash(refs, head);
 }
 
 template <typename Index, typename RefStore>
 void store_t<Index, RefStore>::update_head_hash(hash_t new_hash) {
-    if (!head) {
-        head = new_hash;
-    }
-    else {
-        head = update_ref_hash(refs, *head, new_hash);
-    }
+    head = update_ref_hash(refs, head, new_hash);
 }
 
 template <typename ObjectStore>
