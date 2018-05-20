@@ -118,6 +118,26 @@ typename store_t<Index, RefStore>::object_store& store_t<Index, RefStore>::get_o
     return index.objects;
 }
 
+template <typename Index, typename RefStore>
+optional_hash store_t<Index, RefStore>::get_head_hash() const {
+    if (!head) {
+        return boost::none;
+    }
+    else {
+        return get_ref_hash(refs, *head);
+    }
+}
+
+template <typename Index, typename RefStore>
+void store_t<Index, RefStore>::update_head_hash(hash_t new_hash) {
+    if (!head) {
+        head = new_hash;
+    }
+    else {
+        update_ref_hash(refs, *head, new_hash);
+    }
+}
+
 template <typename ObjectStore>
 boost::optional<tree_t> load_tree(const ObjectStore& objects, hash_t commit_hash) {
     auto commit = objects.template load<commit_t>(commit_hash);

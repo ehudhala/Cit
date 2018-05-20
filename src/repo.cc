@@ -19,9 +19,9 @@ template <typename Store, typename WorkingTree>
 hash_t repo_t<Store, WorkingTree>::commit(const std::string& message) {
     tree_t tree{store.index.files};
     hash_t tree_hash = store.get_objects().store(tree);
-    commit_t commit(message, store.head, tree_hash);
+    commit_t commit{message, store.get_head_hash(), tree_hash};
     hash_t commit_hash = store.get_objects().store(commit);
-    store.head = commit_hash;
+    store.update_head_hash(commit_hash);
     return commit_hash;
 }
 
@@ -44,7 +44,7 @@ bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
     // TODO: check whether the checkout is compatiable with the working copy (conflict)
     // currently we just delete the working copy regardless on checkout.
     update_working_tree(working_tree, *tree_content);
-    store.head = commit_hash;
+    store.update_head_hash(commit_hash);
     return true;
 }
 

@@ -173,9 +173,12 @@ struct store_t {
 
     object_store& get_objects();
 
+    optional_hash get_head_hash() const;
+    void update_head_hash(hash_t);
+
     Index index;
     RefStore refs;
-    optional_hash head; // false before the first commit.
+    boost::optional<ref_t> head; // false before the first commit.
     // TODO: dummy first commit instead?
 };
 

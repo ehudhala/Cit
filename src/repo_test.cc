@@ -52,7 +52,7 @@ TEST(repo_commit, stores_commit_with_no_parent_hash) {
 
 TEST(repo_commit, creates_commit_with_correct_parent_hash) {
     auto r{inc_repo(working_tree_t{{}})};
-    r.store.head = 123;
+    r.store.update_head_hash(123);
     auto commit_hash = r.commit("message");
     auto loaded_commit = r.store.get_objects().load<commit_t>(commit_hash);
     ASSERT_TRUE(bool(loaded_commit));
@@ -63,7 +63,9 @@ TEST(repo_commit, creates_commit_with_correct_parent_hash) {
 TEST(repo_commit, updates_head_to_new_commit) {
     auto r{inc_repo(working_tree_t{{}})};
     auto commit_hash = r.commit("message");
-    EXPECT_EQ(commit_hash, r.store.head);
+    auto head_hash{r.store.get_head_hash()};
+    ASSERT_TRUE(bool(head_hash));
+    EXPECT_EQ(commit_hash, *head_hash);
 }
 
 TEST(repo_commit, updates_refs_to_new_commit) {
@@ -118,5 +120,7 @@ TEST(repo_checkout, updates_head) {
     auto commit_hash = r.commit("message");
     r.commit("new_commit");
     r.checkout(commit_hash);
-    EXPECT_EQ(commit_hash, *r.store.head);
+    auto head_hash{r.store.get_head_hash()};
+    ASSERT_TRUE(bool(head_hash));
+    EXPECT_EQ(commit_hash, *head_hash);
 }

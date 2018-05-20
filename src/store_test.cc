@@ -219,3 +219,29 @@ TEST(update_ref_hash, given_name_returns_name) {
     auto new_ref = update_ref_hash(ref_store, "name", 456);
     EXPECT_EQ("name", boost::get<ref_name_t>(new_ref));
 }
+
+TEST(store_get_update_head_hash, get_no_head_first_commit) {
+    store test_store{inc_store()};
+    ASSERT_FALSE(bool(test_store.get_head_hash()));
+}
+
+TEST(store_get_update_head_hash, update_no_head_first_commit) {
+    store test_store{inc_store()};
+    test_store.update_head_hash(1);
+    auto head_hash = test_store.get_head_hash();
+    ASSERT_TRUE(bool(head_hash));
+    EXPECT_EQ(1, *head_hash);
+}
+
+TEST(store_update_head_hash, head_exists) {
+    store test_store{inc_store()};
+    test_store.head = "name";
+    test_store.update_head_hash(2);
+    // Expect ref isn't changed.
+    ASSERT_TRUE(bool(test_store.head));
+    EXPECT_EQ("name", boost::get<ref_name_t>(*test_store.head));
+    // Expect hash changed.
+    auto head_hash = test_store.get_head_hash();
+    ASSERT_TRUE(bool(head_hash));
+    EXPECT_EQ(2, *head_hash);
+}
