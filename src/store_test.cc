@@ -233,7 +233,7 @@ TEST(store_get_update_head_hash, update_no_head_first_commit) {
     EXPECT_EQ(1, *head_hash);
 }
 
-TEST(store_update_head_hash, head_exists) {
+TEST(store_update_head_hash, head_is_name) {
     store test_store{inc_store()};
     test_store.head = "name";
     test_store.update_head_hash(2);
@@ -241,6 +241,15 @@ TEST(store_update_head_hash, head_exists) {
     ASSERT_TRUE(bool(test_store.head));
     EXPECT_EQ("name", boost::get<ref_name_t>(*test_store.head));
     // Expect hash changed.
+    auto head_hash = test_store.get_head_hash();
+    ASSERT_TRUE(bool(head_hash));
+    EXPECT_EQ(2, *head_hash);
+}
+
+TEST(store_update_head_hash, head_is_hash) {
+    store test_store{inc_store()};
+    test_store.head = 1;
+    test_store.update_head_hash(2);
     auto head_hash = test_store.get_head_hash();
     ASSERT_TRUE(bool(head_hash));
     EXPECT_EQ(2, *head_hash);

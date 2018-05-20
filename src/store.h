@@ -180,6 +180,9 @@ struct store_t {
     RefStore refs;
     boost::optional<ref_t> head; // false before the first commit.
     // TODO: dummy first commit instead?
+    // TODO: currently to get/update hash we have methods,
+    // and to get/update the ref itself (e.g. to give it a name) we mutate head.
+    // Maybe we should also expose methods to update the ref?
 };
 
 /**

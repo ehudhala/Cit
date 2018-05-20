@@ -134,7 +134,7 @@ void store_t<Index, RefStore>::update_head_hash(hash_t new_hash) {
         head = new_hash;
     }
     else {
-        update_ref_hash(refs, *head, new_hash);
+        head = update_ref_hash(refs, *head, new_hash);
     }
 }
 
