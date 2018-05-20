@@ -49,6 +49,20 @@ bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
 }
 
 template <typename Store, typename WorkingTree>
+bool repo_t<Store, WorkingTree>::checkout(ref_name_t ref_name) {
+    if (!store.refs.exists(ref_name)) {
+        return false;
+    }
+    store.head = ref_name;
+    auto new_hash{store.get_head_hash()};
+    if (!new_hash) {
+        // Redundant check because we already checked that it exists.
+        return false;
+    }
+    return checkout(*new_hash);
+}
+
+template <typename Store, typename WorkingTree>
 bool repo_t<Store, WorkingTree>::branch(ref_name_t name) {
     auto head_hash{store.get_head_hash()};
     if (bool(head_hash)) {

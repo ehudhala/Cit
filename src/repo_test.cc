@@ -125,6 +125,24 @@ TEST(repo_checkout, updates_head) {
     EXPECT_EQ(commit_hash, *head_hash);
 }
 
+TEST(repo_checkout_ref, updates_head) {
+    auto r{inc_repo(working_tree_t{{}})};
+    auto commit_hash = r.commit("message");
+    r.branch("branch");
+    r.commit("new_commit");
+    r.checkout("branch");
+    EXPECT_EQ("branch", boost::get<ref_name_t>(r.store.head));
+    auto head_hash{r.store.get_head_hash()};
+    ASSERT_TRUE(bool(head_hash));
+    EXPECT_EQ(commit_hash, *head_hash);
+}
+
+TEST(repo_checkout_ref, fails_when_ref_doesnt_exist) {
+    auto r{inc_repo(working_tree_t{{}})};
+    bool success = r.checkout("branch");
+    EXPECT_FALSE(success);
+}
+
 TEST(repo_branch, new_ref_points_to_curr_head) {
     auto r{inc_repo(working_tree_t{{}})};
     auto commit_hash = r.commit("message");
