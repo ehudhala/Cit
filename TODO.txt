@@ -4,3 +4,4 @@
 * index should just be a tree object.
 * ASSERT_OPTIONAL_EQ instead of assert + expect
 * split store into 2-4 different files.
+* Create a proper README and post to HN :)
