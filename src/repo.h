@@ -36,7 +36,14 @@ public:
      *      The given hash is not a commit.
      */
     bool checkout(hash_t commit_hash);
-    // TODO: we should make a commit_hash_t for static checks.
+    // TODO: we should make a commit_hash_t for compiler validation.
+
+    /**
+     * Creates a new branch pointing to the current head.
+     * Returns whether the new branch was created.
+     * Will not create a new branch when the repo's head doesn't point to a valid commit.
+     */
+    bool branch(ref_name_t);
 
 // private:
     Store store;

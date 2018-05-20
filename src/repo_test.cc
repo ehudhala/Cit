@@ -124,3 +124,21 @@ TEST(repo_checkout, updates_head) {
     ASSERT_TRUE(bool(head_hash));
     EXPECT_EQ(commit_hash, *head_hash);
 }
+
+TEST(repo_branch, new_ref_points_to_curr_head) {
+    auto r{inc_repo(working_tree_t{{}})};
+    auto commit_hash = r.commit("message");
+    bool success = r.branch("new_branch");
+    EXPECT_TRUE(success);
+    auto new_branch_hash = r.store.refs.load("new_branch");
+    ASSERT_TRUE(bool(new_branch_hash));
+    EXPECT_EQ(commit_hash, boost::get<hash_t>(*new_branch_hash));
+}
+
+TEST(repo_branch, branch_when_no_hash_available) {
+    auto r{inc_repo(working_tree_t{{}})};
+    bool success = r.branch("new_branch");
+    EXPECT_FALSE(success);
+    auto new_branch_hash = r.store.refs.load("new_branch");
+    ASSERT_FALSE(bool(new_branch_hash));
+}

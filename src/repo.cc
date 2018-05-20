@@ -48,6 +48,15 @@ bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
     return true;
 }
 
+template <typename Store, typename WorkingTree>
+bool repo_t<Store, WorkingTree>::branch(ref_name_t name) {
+    auto head_hash{store.get_head_hash()};
+    if (bool(head_hash)) {
+        store.refs.update(std::move(name), *head_hash);
+    }
+    return bool(head_hash);
+}
+
 // Instantiations
 
 template class repo_t<store_t<inmemory::index_t<inmemory::object_store_t<serializer>>, inmemory::ref_store_t>, inmemory::working_tree_t>;
