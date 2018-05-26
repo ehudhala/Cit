@@ -11,38 +11,21 @@
 
 namespace cit {
 
-// TODO: doc, refactor to .cc file
+// TODO: doc, tests, dereference no commit.
 template <typename ObjectStore>
 class ancestor_iterator : public boost::iterator_facade<
           ancestor_iterator<ObjectStore>, commit_t,
-          boost::single_pass_traversal_tag, 
-          commit_t> {
+          boost::single_pass_traversal_tag, commit_t> {
 public:
-    ancestor_iterator() : commit(boost::none), objects(boost::none) {}
-    explicit ancestor_iterator(commit_t commit, const ObjectStore& objects) 
-        : commit(commit), objects(objects) {} // commit_t &?
+    ancestor_iterator();
+    explicit ancestor_iterator(commit_t commit, const ObjectStore& objects);
 
 private:
     friend class boost::iterator_core_access;
 
-    void increment() {
-        if (!commit || !commit->parent_hash || !objects) {
-            commit = boost::none;
-        } else {
-            commit = objects->template load<commit_t>(*commit->parent_hash);
-        }
-    };
-
-    bool equal(ancestor_iterator const& other) const {
-        return commit == other.commit;
-    }
-
-    commit_t dereference() const {
-        if (bool(commit)) {
-            return *commit;
-        }
-        return commit_t{}; // TODO: what to do when we dereference an invalid iterator?
-    }
+    void increment();
+    bool equal(ancestor_iterator<ObjectStore> const& other) const;
+    commit_t dereference() const;
 
     boost::optional<commit_t> commit;
     boost::optional<const ObjectStore&> objects;

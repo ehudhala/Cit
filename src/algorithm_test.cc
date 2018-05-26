@@ -22,4 +22,3 @@ TEST(ancestor_iterator, iteration) {
     EXPECT_EQ(child_commit, ancestors[0]);
     EXPECT_EQ(commit_t{}, ancestors[1]);
 }
-
