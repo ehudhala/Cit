@@ -4,15 +4,15 @@
 namespace cit {
 
 template <typename ObjectStore>
-ancestor_iterator<ObjectStore>::ancestor_iterator()
+ancestor_iter<ObjectStore>::ancestor_iter()
     : commit(boost::none), objects(boost::none) {}
 
 template <typename ObjectStore>
-ancestor_iterator<ObjectStore>::ancestor_iterator(commit_t commit, const ObjectStore& objects)
+ancestor_iter<ObjectStore>::ancestor_iter(commit_t commit, const ObjectStore& objects)
     : commit(commit), objects(objects) {}
 
 template <typename ObjectStore>
-void ancestor_iterator<ObjectStore>::increment() {
+void ancestor_iter<ObjectStore>::increment() {
     if (!commit || !commit->parent_hash || !objects) {
         commit = boost::none;
     } else {
@@ -21,18 +21,15 @@ void ancestor_iterator<ObjectStore>::increment() {
 }
 
 template <typename ObjectStore>
-bool ancestor_iterator<ObjectStore>::equal(ancestor_iterator<ObjectStore> const& other) const {
+bool ancestor_iter<ObjectStore>::equal(ancestor_iter<ObjectStore> const& other) const {
     return commit == other.commit;
 }
 
 template <typename ObjectStore>
-commit_t ancestor_iterator<ObjectStore>::dereference() const {
-    if (bool(commit)) {
-        return *commit;
-    }
-    return commit_t{}; // TODO: what to do when we dereference an invalid iterator?
+commit_t ancestor_iter<ObjectStore>::dereference() const {
+    return *commit;
 }
 
-template class ancestor_iterator<inmemory::object_store_t<serializer>>;
+template class ancestor_iter<inmemory::object_store_t<serializer>>;
 
 }
