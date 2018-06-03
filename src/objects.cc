@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "boost/functional/hash.hpp"
+
 #include "boost/archive/text_oarchive.hpp"
 #include "boost/archive/text_iarchive.hpp"
 #include "boost/archive/archive_exception.hpp"
@@ -47,6 +49,16 @@ bool operator==(const cit::object_t& obj, const cit::object_t& other) {
 
 bool operator==(const cit::file_t& file, const cit::file_t& other) {
     return file.name == other.name && file.blob_hash == other.blob_hash;
+}
+
+std::size_t hash_value(const cit::commit_t& commit) {
+    std::size_t seed{0};
+    boost::hash_combine(seed, commit.message);
+    if (bool(commit.parent_hash)) {
+        boost::hash_combine(seed, *commit.parent_hash);
+    }
+    boost::hash_combine(seed, commit.tree_hash);
+    return seed;
 }
 
 }
