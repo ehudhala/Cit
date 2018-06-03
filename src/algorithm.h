@@ -56,6 +56,15 @@ private:
     boost::optional<const ObjectStore&> objects;
 };
 
+/**
+ * Returns the branching point of the two commits. (The first parent of both commits).
+ * Since commits have a single root this should always succeed.
+ *   If anything's broken will return none.
+ */
+template <typename ObjectStore>
+boost::optional<commit_t> get_branch(commit_t, commit_t, ObjectStore);
+
+
 }
 
 #endif

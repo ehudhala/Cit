@@ -1,3 +1,7 @@
+#include <unordered_set>
+
+#include "boost/functional/hash.hpp"
+
 #include "algorithm.h"
 #include "store.h"
 
@@ -30,6 +34,25 @@ commit_t ancestor_iter<ObjectStore>::dereference() const {
     return *commit;
 }
 
-template class ancestor_iter<inmemory::object_store_t<serializer>>;
+template <typename ObjectStore>
+boost::optional<commit_t> get_branch(commit_t lhs, commit_t rhs, ObjectStore objects) {
+    std::unordered_set<commit_t, boost::hash<commit_t>> lhs_ancestors;
+    std::copy(ancestor_iter<ObjectStore>{lhs, objects},
+              ancestor_iter<ObjectStore>{},
+              std::inserter(lhs_ancestors, lhs_ancestors.end()));
+
+    ancestor_iter<ObjectStore> rhs_iter{rhs, objects};
+    for (; rhs_iter != ancestor_iter<ObjectStore>{}; rhs_iter++) {
+        if (lhs_ancestors.find(*rhs_iter) != lhs_ancestors.end()) {
+            return *rhs_iter;
+        }
+    }
+    return boost::none;
+}
+
+
+using object_store = inmemory::object_store_t<serializer>;
+template class ancestor_iter<object_store>;
+template boost::optional<commit_t> get_branch(commit_t, commit_t, object_store);
 
 }
