@@ -5,3 +5,4 @@ driver
 *.swp
 *.swo
 *.d
+src/build
