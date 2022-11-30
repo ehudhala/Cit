@@ -15,19 +15,27 @@ TEST(serializer, blob_deserialized_equal_to_serialized) {
 }
 
 TEST(serializer, commit_no_parent_deserialized_equal_to_serialized) {
-    commit_t commit{"description"};
+    commit_t commit{"message", 123};
     auto serialized{serializer::serialize(commit)};
     auto deserialized{serializer::deserialize<commit_t>(serialized)};
     ASSERT_TRUE(bool(deserialized));
-    EXPECT_TRUE(commit_t{"description"} == *deserialized);
+    EXPECT_TRUE(commit == *deserialized);
 }
 
-TEST(serializer, commit_with_parent_deserialized_equal_to_serialized) {
-    commit_t commit{"description", 123};
+TEST(serializer, full_commit_deserialized_equal_to_seialized) {
+    commit_t commit{"message", 123, 456};
     auto serialized{serializer::serialize(commit)};
     auto deserialized{serializer::deserialize<commit_t>(serialized)};
     ASSERT_TRUE(bool(deserialized));
-    EXPECT_TRUE(commit_t("description", 123) == *deserialized);
+    EXPECT_TRUE(commit == *deserialized);
+}
+
+TEST(serializer, tree_deserialized_equal_to_serialized) {
+    tree_t tree{{{"file1", 123}, {"file2", 234}}};
+    auto serialized{serializer::serialize(tree)};
+    auto deserialized{serializer::deserialize<tree_t>(serialized)};
+    ASSERT_TRUE(bool(deserialized));
+    EXPECT_TRUE(tree == *deserialized);
 }
 
 TEST(serializer, deserialize_error_handling) {

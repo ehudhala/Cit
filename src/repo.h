@@ -22,6 +22,12 @@ public:
      */
     optional_hash add(const name_t&);
 
+    /**
+     * Commits the current index.
+     * Creates a commit object, and updates the current ref.
+     */
+    hash_t commit(const std::string& message);
+
 // private:
     Store store;
     WorkingTree working_tree;

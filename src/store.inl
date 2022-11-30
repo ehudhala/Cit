@@ -42,7 +42,7 @@ boost::optional<Object> object_store_t<Serializer>::load(hash_t hash) const {
 template <typename ObjectStore>
 hash_t index_t<ObjectStore>::add(const name_t& name, const blob_t& blob) {
     hash_t hash = objects.store(blob);
-    blob_names[name] = hash;
+    files.push_back({name, hash});
     return hash;
 }
 

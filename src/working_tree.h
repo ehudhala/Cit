@@ -7,8 +7,6 @@
 
 #include "boost/optional.hpp"
 
-#include "objects.h"
-
 namespace cit {
 
 using name_t = std::string;
