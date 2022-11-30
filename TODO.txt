@@ -1,5 +1,6 @@
 * look over all code (probably from commit onwards) and see if I forgot const functions.
-* Stop using boost::optional for exceptions. use boost::expect.
+* Stop using boost::optional for exceptions. use boost::expect, boost.outcome or exceptions.
+    * there is a stash containing a refactor to use exceptions.
 * checkout should handle also branch.
 * index should just be a tree object.
 * ASSERT_OPTIONAL_EQ instead of assert + expect

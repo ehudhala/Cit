@@ -37,6 +37,7 @@ public:
      *     * The commit isn't valid (no tree, tree doesn't have content).
      */
     bool checkout(hash_t commit_hash);
+    // TODO: Currently overrides changed files in the working tree, to be fixed in future versions.
     // TODO: we should make a commit_hash_t for compiler validation.
 
     /**

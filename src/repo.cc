@@ -1,6 +1,3 @@
-#ifndef _CIT_REPO_INL_
-#define _CIT_REPO_INL_
-
 #include "repo.h"
 
 namespace cit {
@@ -72,5 +69,3 @@ bool repo_t<Store, WorkingTree>::branch(ref_name_t name) {
 template class repo_t<store_t<inmemory::index_t<inmemory::object_store_t<serializer>>, inmemory::ref_store_t>, inmemory::working_tree_t>;
 
 }
-
-#endif

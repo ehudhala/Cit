@@ -1,6 +1,3 @@
-#ifndef _CIT_STORE_INL_
-#define _CIT_STORE_INL_
-
 #include "boost/hana/functional/overload.hpp"
 
 #include "store.h"
@@ -179,5 +176,3 @@ template ref_t update_ref_hash(inmemory::ref_store_t&, ref_t, hash_t);
 template void update_ref_deep_hash(inmemory::ref_store_t&, ref_name_t, hash_t);
 
 }
-
-#endif
