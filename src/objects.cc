@@ -32,12 +32,7 @@ struct object_equals {
     }
 
     bool operator()(const cit::tree_t& tree, const cit::tree_t& other) const {
-        auto match = std::mismatch(tree.files.begin(), tree.files.end(),
-                other.files.begin(), other.files.end(),
-                [](const auto& lhs, const auto& rhs) {
-                    return lhs.name == rhs.name && lhs.hash == rhs.hash;
-                });
-        return match.first == tree.files.end() && match.second == other.files.end();
+        return tree.files == other.files;
     }
 
     template <class Object, class Other>
@@ -48,6 +43,10 @@ struct object_equals {
 
 bool operator==(const cit::object_t& obj, const cit::object_t& other) {
     return boost::apply_visitor(object_equals{}, obj, other);
+}
+
+bool operator==(const cit::file_t& file, const cit::file_t& other) {
+    return file.name == other.name && file.blob_hash == other.blob_hash;
 }
 
 }
@@ -73,7 +72,7 @@ template<typename Archive>
 void serialize(Archive& ar, cit::file_t& file, const unsigned int)
 {
     ar & file.name;
-    ar & file.hash;
+    ar & file.blob_hash;
 }
 
 template<typename Archive>

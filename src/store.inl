@@ -46,11 +46,38 @@ hash_t index_t<ObjectStore>::add(const name_t& name, const blob_t& blob) {
     return hash;
 }
 
+template <typename ObjectStore>
+void index_t<ObjectStore>::update(std::vector<file_t> new_files) {
+    files = std::move(new_files);
+}
+
 }
 
 template <typename Index>
 typename store_t<Index>::object_store& store_t<Index>::get_objects() {
     return index.objects;
+}
+
+template <typename ObjectStore>
+boost::optional<tree_t> load_tree(const ObjectStore& objects, hash_t commit_hash) {
+    auto commit = objects.template load<commit_t>(commit_hash);
+    if (!commit) {
+        return boost::none;
+    }
+    return objects.template load<tree_t>((*commit).tree_hash);
+}
+
+template <typename ObjectStore>
+boost::optional<tree_content_t> load_tree_content(const ObjectStore& objects, tree_t tree) {
+    tree_content_t content;
+    for (const auto& file : tree.files) {
+        auto blob = objects.template load<blob_t>(file.blob_hash);
+        if (!blob) {
+            return boost::none;
+        }
+        content[file.name] = (*blob).content;
+    }
+    return content;
 }
 
 }

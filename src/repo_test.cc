@@ -15,7 +15,7 @@ TEST(repo_add, adds_blob_to_index) {
     ASSERT_TRUE(bool(hash));
     auto index_file = find_file(r.store.index.files, "name");
     ASSERT_TRUE(bool(index_file));
-    EXPECT_EQ(hash, index_file->hash);
+    EXPECT_EQ(hash, index_file->blob_hash);
 }
 
 TEST(repo_add, adds_blob_to_store) {
@@ -68,4 +68,55 @@ TEST(repo_commit, updates_head_to_new_commit) {
 
 TEST(repo_commit, updates_refs_to_new_commit) {
     // TODO: implement when we support refs.
+}
+
+TEST(repo_checkout, returns_false_when_no_commit_found) {
+    auto r{inc_repo(working_tree_t{{}})};
+    EXPECT_FALSE(r.checkout(234));
+}
+
+TEST(repo_checkout, returns_false_when_hash_isnt_commit) {
+    auto r{inc_repo(working_tree_t{{{"name", "content"}}})};
+    auto hash = r.add("name");
+    EXPECT_FALSE(r.checkout(*hash));
+}
+
+TEST(repo_checkout, updates_index_files) {
+    std::string content{"content"}, name{"name"};
+    auto r{inc_repo(working_tree_t{{{name, content}}})};
+    auto blob_hash = r.add(name);
+    auto commit_hash = r.commit("message");
+    r.working_tree.write(name, "new_content");
+    r.add(name);
+    r.commit("new_commit");
+    r.checkout(commit_hash);
+    ASSERT_TRUE(bool(blob_hash));
+    std::vector<file_t> expected_files{{name, *blob_hash}};
+    EXPECT_EQ(expected_files, r.store.index.files);
+}
+
+TEST(repo_checkout, updates_working_tree) {
+    std::string content{"content"}, name{"name"}, 
+        deleted_on_checkout{"deleted"};
+    auto r{inc_repo(working_tree_t{{{name, content}}})};
+    auto blob_hash = r.add(name);
+    auto commit_hash = r.commit("message");
+    r.working_tree.write(name, "new_content");
+    r.working_tree.write(deleted_on_checkout, content);
+    r.add(name);
+    r.add(deleted_on_checkout);
+    r.commit("new_commit");
+    r.checkout(commit_hash);
+
+    auto working_tree_content = *r.working_tree.read(name);
+    EXPECT_EQ(content, working_tree_content);
+    EXPECT_FALSE(r.working_tree.contains(deleted_on_checkout));
+}
+
+TEST(repo_checkout, updates_head) {
+    auto r{inc_repo(working_tree_t{{}})};
+    auto commit_hash = r.commit("message");
+    r.commit("new_commit");
+    r.checkout(commit_hash);
+    EXPECT_EQ(commit_hash, *r.store.head);
 }

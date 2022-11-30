@@ -71,6 +71,9 @@ private:
     std::map<hash_t, std::string> objects_map;
 };
 
+// TODO: we should add to objects many loads, probably as object methods
+// e.g. commit.load_tree, tree.load_file
+
 /**
  * Used as the index for Cit.
  * Contains the currently staged files.
@@ -93,8 +96,14 @@ public:
     hash_t add(const name_t&, const blob_t&);
 
     /**
+     * Updates the index to hold the given files and hashes.
+     */
+    void update(std::vector<file_t>);
+
+    /**
      * The index contents.
      * Contains all the current files in the index.
+     * TODO: this should be private, externally we should have a method to access.
      */
     std::vector<file_t> files;
 
@@ -113,6 +122,18 @@ struct store_t {
     optional_hash head; // false before the first commit.
     // TODO: dummy first commit instead?
 };
+
+/**
+ * Loads a commit and retrieves its tree.
+ */
+template <typename ObjectStore>
+boost::optional<tree_t> load_tree(const ObjectStore&, hash_t commit_hash);
+
+/**
+ * Loads all the content of the given tree.
+ */
+template <typename ObjectStore>
+boost::optional<tree_content_t> load_tree_content(const ObjectStore&, tree_t tree);
 
 }
 

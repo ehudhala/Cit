@@ -25,6 +25,29 @@ hash_t repo_t<Store, WorkingTree>::commit(const std::string& message) {
     return commit_hash;
 }
 
+// TODO: checkout MUST be atommic, we don't want corruptions...
+// for the first phase it's not atomic though.
+template <typename Store, typename WorkingTree>
+bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
+    // TODO: better error handling. 
+    // Currently we just return false on error, with no reason provided.
+    auto tree = load_tree(store.get_objects(), commit_hash);
+    if (!tree) {
+        return false;
+    }
+    store.index.update((*tree).files);
+
+    auto tree_content = load_tree_content(store.get_objects(), *tree);
+    if (!tree_content) {
+        return false;
+    }
+    // TODO: check whether the checkout is compatiable with the working copy (conflict)
+    // currently we just delete the working copy regardless on checkout.
+    update_working_tree(working_tree, *tree_content);
+    store.head = commit_hash;
+    return true;
+}
+
 }
 
 #endif
