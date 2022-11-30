@@ -10,7 +10,7 @@ using namespace cit;
 
 using object_store_t = inmemory::object_store_t<serializer>;
 using index_t = inmemory::index_t<object_store_t>;
-using store = store_t<index_t>;
+using store = store_t<index_t, inmemory::ref_store_t>;
 using repo = repo_t<store, inmemory::working_tree_t>;
 using working_tree_t = inmemory::working_tree_t;
 

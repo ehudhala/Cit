@@ -33,10 +33,29 @@ public:
      * Changes the working tree and the index, and updates head.
      * Returns whether the checkout succeeded.
      * Checkout may fail when:
-     *      The given hash is not a commit.
+     *     * The given hash is not a commit.
+     *     * The commit isn't valid (no tree, tree doesn't have content).
      */
     bool checkout(hash_t commit_hash);
-    // TODO: we should make a commit_hash_t for static checks.
+    // TODO: we should make a commit_hash_t for compiler validation.
+
+    /**
+     * Checks out the given ref:
+     *     * Updates head to the given name, tracking it from now.
+     *     * Checks out the commit the ref points to.
+     * Returns whether the checkout succeeded or not.
+     * Checkout may fail when:
+     *     * Regular checkout may fail.
+     *     * The given name doesn't point to a hash.
+     */
+    bool checkout(ref_name_t);
+
+    /**
+     * Creates a new branch pointing to the current head.
+     * Returns whether the new branch was created.
+     * Will not create a new branch when the repo's head doesn't point to a valid commit.
+     */
+    bool branch(ref_name_t);
 
 // private:
     Store store;
@@ -46,5 +65,3 @@ public:
 }
 
 #endif
-
-#include "repo.inl"

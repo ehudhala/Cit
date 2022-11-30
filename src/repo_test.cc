@@ -52,7 +52,7 @@ TEST(repo_commit, stores_commit_with_no_parent_hash) {
 
 TEST(repo_commit, creates_commit_with_correct_parent_hash) {
     auto r{inc_repo(working_tree_t{{}})};
-    r.store.head = 123;
+    r.store.update_head_hash(123);
     auto commit_hash = r.commit("message");
     auto loaded_commit = r.store.get_objects().load<commit_t>(commit_hash);
     ASSERT_TRUE(bool(loaded_commit));
@@ -63,7 +63,9 @@ TEST(repo_commit, creates_commit_with_correct_parent_hash) {
 TEST(repo_commit, updates_head_to_new_commit) {
     auto r{inc_repo(working_tree_t{{}})};
     auto commit_hash = r.commit("message");
-    EXPECT_EQ(commit_hash, r.store.head);
+    auto head_hash{r.store.get_head_hash()};
+    ASSERT_TRUE(bool(head_hash));
+    EXPECT_EQ(commit_hash, *head_hash);
 }
 
 TEST(repo_commit, updates_refs_to_new_commit) {
@@ -118,5 +120,43 @@ TEST(repo_checkout, updates_head) {
     auto commit_hash = r.commit("message");
     r.commit("new_commit");
     r.checkout(commit_hash);
-    EXPECT_EQ(commit_hash, *r.store.head);
+    auto head_hash{r.store.get_head_hash()};
+    ASSERT_TRUE(bool(head_hash));
+    EXPECT_EQ(commit_hash, *head_hash);
+}
+
+TEST(repo_checkout_ref, updates_head) {
+    auto r{inc_repo(working_tree_t{{}})};
+    auto commit_hash = r.commit("message");
+    r.branch("branch");
+    r.commit("new_commit");
+    r.checkout("branch");
+    EXPECT_EQ("branch", boost::get<ref_name_t>(r.store.head));
+    auto head_hash{r.store.get_head_hash()};
+    ASSERT_TRUE(bool(head_hash));
+    EXPECT_EQ(commit_hash, *head_hash);
+}
+
+TEST(repo_checkout_ref, fails_when_ref_doesnt_exist) {
+    auto r{inc_repo(working_tree_t{{}})};
+    bool success = r.checkout("branch");
+    EXPECT_FALSE(success);
+}
+
+TEST(repo_branch, new_ref_points_to_curr_head) {
+    auto r{inc_repo(working_tree_t{{}})};
+    auto commit_hash = r.commit("message");
+    bool success = r.branch("new_branch");
+    EXPECT_TRUE(success);
+    auto new_branch_hash = r.store.refs.load("new_branch");
+    ASSERT_TRUE(bool(new_branch_hash));
+    EXPECT_EQ(commit_hash, boost::get<hash_t>(*new_branch_hash));
+}
+
+TEST(repo_branch, branch_when_no_hash_available) {
+    auto r{inc_repo(working_tree_t{{}})};
+    bool success = r.branch("new_branch");
+    EXPECT_FALSE(success);
+    auto new_branch_hash = r.store.refs.load("new_branch");
+    ASSERT_FALSE(bool(new_branch_hash));
 }

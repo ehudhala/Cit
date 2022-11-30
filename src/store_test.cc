@@ -4,6 +4,7 @@
 #include "store.h"
 
 #include "test_utils.h"
+#include "utils.h"
 
 using namespace cit;
 
@@ -45,14 +46,6 @@ TEST(inmemory_object_store_load, blob_returns_stored) {
     ASSERT_TRUE(bool(loaded));
     EXPECT_TRUE(blob == *loaded);
 }
-
-struct failing_deserializtion {
-    static std::string serialize(const object_t&) {return "";}
-    template <class Object>
-    static boost::optional<Object> deserialize(const std::string&) {
-        return boost::none;
-    }
-};
 
 TEST(inmemory_object_store_load, deserializtion_fails) {
     inmemory::object_store_t<failing_deserializtion> objects(incrementing_hash_func{});
@@ -123,4 +116,140 @@ TEST(index_update, updates_the_index) {
     std::vector<file_t> files{file};
     index.update(files);
     EXPECT_EQ(files, index.files);
+}
+
+TEST(ref_store, load_non_existent) {
+    inmemory::ref_store_t ref_store;
+    EXPECT_FALSE(bool(ref_store.load("non_existent")));
+}
+
+TEST(ref_store, update_and_load_hash) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("hash", 123);
+    auto ref{ref_store.load("hash")};
+    ASSERT_TRUE(bool(ref));
+    EXPECT_EQ(123, boost::get<hash_t>(*ref));
+}
+
+TEST(ref_store, update_and_load_recursive_ref_name) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("hash", 123);
+    ref_store.update("name", "hash");
+    auto name_ref{ref_store.load("name")};
+    ASSERT_TRUE(bool(name_ref));
+    EXPECT_EQ("hash", boost::get<ref_name_t>(*name_ref));
+}
+
+TEST(get_ref_hash, hash_ref) {
+    inmemory::ref_store_t ref_store;
+    auto hash = get_ref_hash(ref_store, 123);
+    ASSERT_TRUE(bool(hash));
+    EXPECT_EQ(123, *hash);
+}
+
+TEST(get_ref_hash, name_not_pointing_to_hash) {
+    inmemory::ref_store_t ref_store;
+    auto hash = get_ref_hash(ref_store, "non_existent_name");
+    ASSERT_FALSE(bool(hash));
+}
+
+TEST(get_ref_hash, name_pointing_to_hash) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("hash", 123);
+    auto hash = get_ref_hash(ref_store, "hash");
+    ASSERT_TRUE(bool(hash));
+    EXPECT_EQ(123, *hash);
+}
+
+TEST(get_ref_hash, recursive_name_pointing_to_hash) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("hash", 123);
+    ref_store.update("name", "hash");
+    auto hash = get_ref_hash(ref_store, "name");
+    ASSERT_TRUE(bool(hash));
+    EXPECT_EQ(123, *hash);
+}
+
+TEST(update_ref_deep_hash, name_points_to_hash) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("hash", 123);
+    update_ref_deep_hash(ref_store, "hash", 456);
+    auto loaded_hash{ref_store.load("hash")};
+    ASSERT_TRUE(bool(loaded_hash));
+    EXPECT_EQ(456, boost::get<hash_t>(*loaded_hash));
+}
+
+TEST(update_ref_deep_hash, name_points_to_hash_recursively) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("hash", 123);
+    ref_store.update("name", "hash");
+    update_ref_deep_hash(ref_store, "name", 456);
+    auto loaded_hash{ref_store.load("hash")};
+    ASSERT_TRUE(bool(loaded_hash));
+    EXPECT_EQ(456, boost::get<hash_t>(*loaded_hash));
+}
+
+TEST(update_ref_deep_hash, name_doesnt_point_to_hash) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("name", "hash");
+    update_ref_deep_hash(ref_store, "name", 456);
+    auto loaded_hash{ref_store.load("hash")};
+    ASSERT_TRUE(bool(loaded_hash));
+    EXPECT_EQ(456, boost::get<hash_t>(*loaded_hash));
+}
+
+TEST(update_ref_hash, given_hash) {
+    inmemory::ref_store_t ref_store;
+    auto new_hash = update_ref_hash(ref_store, 123, 456);
+    EXPECT_EQ(456, boost::get<hash_t>(new_hash));
+}
+
+TEST(update_ref_hash, given_name_deep_updates_hash) {
+    inmemory::ref_store_t ref_store;
+    ref_store.update("hash", 123);
+    ref_store.update("name", "hash");
+    update_ref_hash(ref_store, "name", 456);
+    auto loaded_hash{ref_store.load("hash")};
+    ASSERT_TRUE(bool(loaded_hash));
+    EXPECT_EQ(456, boost::get<hash_t>(*loaded_hash));
+}
+
+TEST(update_ref_hash, given_name_returns_name) {
+    inmemory::ref_store_t ref_store;
+    auto new_ref = update_ref_hash(ref_store, "name", 456);
+    EXPECT_EQ("name", boost::get<ref_name_t>(new_ref));
+}
+
+TEST(store_get_update_head_hash, get_no_head_first_commit) {
+    store test_store{inc_store()};
+    ASSERT_FALSE(bool(test_store.get_head_hash()));
+}
+
+TEST(store_get_update_head_hash, update_no_head_first_commit) {
+    store test_store{inc_store()};
+    test_store.update_head_hash(1);
+    auto head_hash = test_store.get_head_hash();
+    ASSERT_TRUE(bool(head_hash));
+    EXPECT_EQ(1, *head_hash);
+}
+
+TEST(store_update_head_hash, head_is_name) {
+    store test_store{inc_store()};
+    test_store.head = "name";
+    test_store.update_head_hash(2);
+    // Expect ref isn't changed.
+    EXPECT_EQ("name", boost::get<ref_name_t>(test_store.head));
+    // Expect hash changed.
+    auto head_hash = test_store.get_head_hash();
+    ASSERT_TRUE(bool(head_hash));
+    EXPECT_EQ(2, *head_hash);
+}
+
+TEST(store_update_head_hash, head_is_hash) {
+    store test_store{inc_store()};
+    test_store.head = 1;
+    test_store.update_head_hash(2);
+    auto head_hash = test_store.get_head_hash();
+    ASSERT_TRUE(bool(head_hash));
+    EXPECT_EQ(2, *head_hash);
 }

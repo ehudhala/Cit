@@ -7,11 +7,41 @@
 #include <type_traits>
 
 #include "boost/optional.hpp"
+#include "boost/variant.hpp"
 
 #include "objects.h"
 #include "working_tree.h"
 
 namespace cit {
+
+using ref_name_t = std::string;
+using ref_t = boost::variant<ref_name_t, hash_t>;
+
+/**
+ * Recursively loads names from the store to get the hash of the given ref.
+ */
+template <typename RefStore>
+boost::optional<hash_t> get_ref_hash(const RefStore&, ref_t);
+
+/**
+ * Updates the hash the ref points to without changing ref names.
+ * Only updates the deepest hash in the chain of names.
+ * Returns the new ref.
+ *  If the given ref is a hash, just returns the new hash.
+ *  If the given ref is a name returns the given name, and updates the deep pointed hash.
+ * e.g.:
+ *      update_ref_hash(123, 456) -> 456
+ *      update_ref_hash("ref_name", 456) -> "ref_name"
+ */
+template <typename RefStore>
+ref_t update_ref_hash(RefStore&, ref_t, hash_t new_hash);
+
+/**
+ * Updates the hash the ref points to without changing ref names.
+ * Only updates the deepest hash in the chain of names.
+ */
+template <typename RefStore>
+void update_ref_deep_hash(RefStore&, ref_name_t, hash_t new_hash);
 
 namespace inmemory {
 
@@ -84,6 +114,7 @@ class index_t {
 public:
     // TODO: rename object_store according to conventions.
     using object_store = ObjectStore;
+
     /**
      * The index is injected with the object_store it should store objects to.
      */
@@ -110,17 +141,50 @@ public:
     ObjectStore objects;
 };
 
+/**
+ * Stores all the refs to commits.
+ * Allows updating and loading them, most of the code using the ref should use
+ * cit::get_ref_hash and cit::update_ref_hash
+ */
+class ref_store_t {
+public:
+    /**
+     * Updates the ref with the given ref name to hold the new given ref.
+     */
+    void update(const ref_name_t&, ref_t);
+
+    /**
+     * Loads the ref content of the given ref name.
+     * Returns either the loaded ref, or none if the ref doesn't point to anything.
+     */
+    boost::optional<ref_t> load(const ref_name_t&) const;
+    // TODO: maybe return a const reference to the ref.
+
+private:
+    std::map<ref_name_t, ref_t> refs;
+};
+
 }
 
-template <typename Index>
+template <typename Index, typename RefStore>
 struct store_t {
     using object_store = typename Index::object_store;
-    store_t(Index index) : index(index) {}
+    store_t(Index index, RefStore refs, ref_t head);
+    store_t(Index index, RefStore refs);
 
     object_store& get_objects();
+
+    optional_hash get_head_hash() const;
+    void update_head_hash(hash_t);
+
     Index index;
-    optional_hash head; // false before the first commit.
+    RefStore refs;
+    ref_t head;
+    inline static const ref_t default_ref{"master"};
     // TODO: dummy first commit instead?
+    // TODO: currently to get/update hash we have methods,
+    // and to get/update the ref itself (e.g. to give it a name) we mutate head.
+    // Maybe we should also expose methods to update the ref?
 };
 
 /**
@@ -133,10 +197,8 @@ boost::optional<tree_t> load_tree(const ObjectStore&, hash_t commit_hash);
  * Loads all the content of the given tree.
  */
 template <typename ObjectStore>
-boost::optional<tree_content_t> load_tree_content(const ObjectStore&, tree_t tree);
+boost::optional<tree_content_t> load_tree_content(const ObjectStore&, tree_t);
 
 }
 
 #endif
-
-#include "store.inl"

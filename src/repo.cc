@@ -19,9 +19,9 @@ template <typename Store, typename WorkingTree>
 hash_t repo_t<Store, WorkingTree>::commit(const std::string& message) {
     tree_t tree{store.index.files};
     hash_t tree_hash = store.get_objects().store(tree);
-    commit_t commit(message, store.head, tree_hash);
+    commit_t commit{message, store.get_head_hash(), tree_hash};
     hash_t commit_hash = store.get_objects().store(commit);
-    store.head = commit_hash;
+    store.update_head_hash(commit_hash);
     return commit_hash;
 }
 
@@ -44,9 +44,32 @@ bool repo_t<Store, WorkingTree>::checkout(hash_t commit_hash) {
     // TODO: check whether the checkout is compatiable with the working copy (conflict)
     // currently we just delete the working copy regardless on checkout.
     update_working_tree(working_tree, *tree_content);
-    store.head = commit_hash;
+    store.update_head_hash(commit_hash);
     return true;
 }
+
+template <typename Store, typename WorkingTree>
+bool repo_t<Store, WorkingTree>::checkout(ref_name_t ref_name) {
+    auto ref_hash{get_ref_hash(store.refs, ref_name)};
+    if (!ref_hash) {
+        return false;
+    }
+    store.head = ref_name;
+    return checkout(*ref_hash);
+}
+
+template <typename Store, typename WorkingTree>
+bool repo_t<Store, WorkingTree>::branch(ref_name_t name) {
+    auto head_hash{store.get_head_hash()};
+    if (bool(head_hash)) {
+        store.refs.update(std::move(name), *head_hash);
+    }
+    return bool(head_hash);
+}
+
+// Instantiations
+
+template class repo_t<store_t<inmemory::index_t<inmemory::object_store_t<serializer>>, inmemory::ref_store_t>, inmemory::working_tree_t>;
 
 }
 

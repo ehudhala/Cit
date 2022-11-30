@@ -6,6 +6,7 @@
 
 #include "boost/optional.hpp"
 
+#include "objects.h"
 
 template <typename Key, typename Val, typename Return>
 boost::optional<Return> optional_read(const std::map<Key, Val>& map, const Key& key) {
@@ -15,5 +16,13 @@ boost::optional<Return> optional_read(const std::map<Key, Val>& map, const Key& 
     }
     return boost::none;
 }
+
+struct failing_deserializtion {
+    static std::string serialize(const cit::object_t&) {return "";}
+    template <class Object>
+    static boost::optional<Object> deserialize(const std::string&) {
+        return boost::none;
+    }
+};
 
 #endif
